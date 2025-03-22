@@ -30,6 +30,8 @@ class Register : AppCompatActivity() {
 
         val loginButton = findViewById<TextView>(R.id.login_button)
         loginButton.setOnClickListener {
+            val intent = Intent(this, login::class.java)
+            startActivity(intent)
             finish()
         }
         auth = FirebaseAuth.getInstance()
