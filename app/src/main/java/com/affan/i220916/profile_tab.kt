@@ -12,8 +12,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
 
 class profile_tab : AppCompatActivity() {
+    private lateinit var auth: FirebaseAuth;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -22,6 +24,15 @@ class profile_tab : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+
+        auth= FirebaseAuth.getInstance()
+        val logoutBtn = findViewById<TextView>(R.id.logout_button)
+        logoutBtn.setOnClickListener {
+            auth.signOut()
+            val intent=Intent(this,Register::class.java)
+            startActivity(intent)
+            finish()
         }
 
         val homeBtn = findViewById<ImageView>(R.id.home_btn)
