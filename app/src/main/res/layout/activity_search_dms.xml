@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".searchDMs">
+
+    <ImageView
+        android:id="@+id/back_button"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/back_icon"
+        android:layout_marginTop="30dp"
+        android:layout_alignLeft="@id/name"/>
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="OliviaD"
+        android:textColor="#313133"
+        android:layout_marginTop="30dp"
+        android:textSize="25dp"
+        android:paddingLeft="35dp"
+        android:textStyle="bold"
+
+        />
+
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/newmsg_icon"
+        android:layout_marginRight="15dp"
+        android:layout_alignRight="@id/name"
+        android:layout_marginTop="30dp" />
+
+    <TextView
+        android:id="@+id/DMs"
+        android:layout_below="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="DMs"
+        android:textStyle="bold"
+        android:textColor="#59442F"
+        android:textSize="18dp"
+        android:paddingLeft="38dp"
+        android:layout_marginTop="10dp"
+        />
+
+    <View
+        android:layout_below="@id/DMs"
+        android:layout_width="85dp"
+        android:layout_height="2dp"
+        android:background="#59442F"
+        android:layout_marginTop="1dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginBottom="20dp"
+        />
+
+    <TextView
+        android:id="@+id/Requests"
+        android:layout_below="@+id/name"
+        android:layout_toRightOf="@+id/DMs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Requests"
+        android:textColor="#313133"
+        android:textSize="18dp"
+        android:paddingLeft="200dp"
+        android:layout_marginTop="10dp"
+        />
+
+    <EditText
+        android:id="@+id/search"
+        android:layout_below="@+id/Requests"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:hint="Search for DMs"
+        android:paddingLeft="20dp"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/transparent"
+
+        />
+
+    <ImageView
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:id="@+id/searchIcon"
+        android:src="@drawable/search_icon"
+        android:layout_alignRight="@+id/search"
+        android:layout_alignBottom="@+id/search"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="15dp"
+        android:alpha="0.4"
+        />
+
+    <RelativeLayout
+        android:layout_below="@+id/search"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp" />
+    </RelativeLayout>
+
+
+</RelativeLayout>

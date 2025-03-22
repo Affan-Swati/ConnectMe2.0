@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".new_post_gallery">
+
+    <TextView
+        android:id="@+id/H1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Post"
+        android:textColor="#313133"
+        android:layout_marginTop="20dp"
+        android:textSize="22dp"
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/H2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Next"
+        android:textColor="#59442F"
+        android:layout_marginTop="20dp"
+        android:textSize="22dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd = "18dp"
+        android:textStyle="bold"/>
+
+
+    <ImageView
+        android:id="@+id/cross_button"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignBottom="@+id/H1"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/cross_icon" />
+
+    <ImageView
+        android:id="@+id/pfp"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="7dp"
+        android:layout_below="@+id/H1"
+        android:src="@drawable/affan_pfp"/>
+
+    <TextView
+        android:id="@+id/H3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/pfp"
+        android:layout_alignLeft="@+id/cross_button"
+        android:layout_marginTop="10dp"
+        android:text="Recents"
+        android:textSize="18dp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_toRightOf="@+id/H3"
+        android:layout_alignBottom="@+id/H3"
+        android:layout_marginBottom="-4dp"
+        android:rotation="180"
+        android:layout_marginLeft="5dp"
+        android:src="@drawable/back_icon"/>
+
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_toRightOf="@+id/H3"
+        android:layout_below="@+id/pfp"
+        android:layout_marginTop="11dp"
+        android:layout_marginLeft="215dp"
+        android:src="@drawable/album_icon"/>
+
+    <ImageView
+        android:id="@+id/camera_button"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_toRightOf="@+id/H3"
+        android:layout_below="@+id/pfp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="250dp"
+        android:src="@drawable/camera_icon"/>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="10dp"
+        android:id="@+id/recycler_view_gallery"
+        android:layout_below="@+id/H3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/profile_item"
+        android:background="#F0EBEB"/>
+
+
+
+</RelativeLayout>

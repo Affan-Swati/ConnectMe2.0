@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".audio_call">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:textColor="#000000"
+        android:textStyle="bold"
+        android:text="Affan Ahmad"
+        android:textSize="30dp"
+        android:layout_marginTop="100dp"/>
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/pfp"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:layout_centerInParent="true"
+        android:src="@drawable/affan_pfp"
+        app:shapeAppearanceOverlay="@style/CircleShape"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:textColor="#000000"
+        android:text="10:32"
+        android:textSize="25dp"
+        android:layout_marginTop="500dp"/>
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_alignParentBottom="true">
+
+        <ImageView
+            android:id="@+id/bar"
+            android:layout_width="350dp"
+            android:layout_height="70dp"
+            android:layout_marginLeft="22dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/typing_bg_l"/>
+
+        <ImageView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_alignLeft="@+id/bar"
+            android:layout_alignBottom="@+id/bar"
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="15dp"
+            android:background="@drawable/circle_icon_bg"
+            android:padding="5dp"
+            android:src="@drawable/three_dots_horizontal" />
+s
+        <ImageView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_alignLeft="@+id/bar"
+            android:layout_alignBottom="@+id/bar"
+            android:layout_marginLeft="85dp"
+            android:layout_marginBottom="15dp"
+            android:background="@drawable/circle_icon_bg"
+            android:padding="5dp"
+            android:src="@drawable/video_call_white" />
+
+        <ImageView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_alignLeft="@+id/bar"
+            android:layout_alignBottom="@+id/bar"
+            android:layout_marginLeft="155dp"
+            android:layout_marginBottom="15dp"
+            android:background="@drawable/circle_icon_bg"
+            android:padding="7dp"
+            android:src="@drawable/speaker_icon" />
+
+        <ImageView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_alignLeft="@+id/bar"
+            android:layout_alignBottom="@+id/bar"
+            android:layout_marginLeft="220dp"
+            android:layout_marginBottom="15dp"
+            android:background="@drawable/circle_icon_bg"
+            android:padding="10dp"
+            android:src="@drawable/mic_muted" />
+
+        <ImageView
+            android:id="@+id/end_call"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_alignLeft="@+id/bar"
+            android:layout_alignBottom="@+id/bar"
+            android:layout_marginLeft="285dp"
+            android:layout_marginBottom="15dp"
+            android:background="@drawable/circle_icon_bg_white"
+            android:src="@drawable/end_call_icon" />
+
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

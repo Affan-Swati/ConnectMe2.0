@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".vanish_mode"
+    android:background="#313133">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/top_bar">
+
+        <ImageView
+            android:id="@+id/back_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="3dp"
+            android:src="@drawable/back_icon_white"
+            android:layout_marginTop="25dp"/>
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Affan"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="25dp"
+            android:textSize="25dp"
+            android:layout_marginLeft="45dp"
+            android:textStyle="bold"
+
+            />
+
+
+    </RelativeLayout>
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/profile_info">
+
+        <FrameLayout
+            android:id="@+id/pfp_frame"
+            android:layout_centerHorizontal="true"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="100dp">
+
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/pfp"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_gravity="center"
+                android:src="@drawable/affan_pfp"
+                app:shapeAppearanceOverlay="@style/CircleShape"/>
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/view_profile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/pfp_frame"
+            android:layout_centerHorizontal="true"
+            android:text="View Profile"
+            android:textSize="15dp"
+            android:layout_marginTop="15dp"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/msg_d_background"/>
+
+    </RelativeLayout>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_msgs_dark"
+        android:layout_below="@+id/profile_info"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:paddingTop="20dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/other_msg_dark"/>
+
+
+    <RelativeLayout
+        android:id="@+id/vanish_msg"
+        android:layout_below="@id/recycler_view_msgs_dark"
+        android:layout_width="match_parent"
+        android:layout_marginTop="5dp"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="You've turned on vanish mode.New messgaes will disappear in"
+            android:textColor="#FFFFFF"
+            android:layout_marginLeft="20dp"
+            android:alpha="0.7"
+            android:textSize="12dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="24 hours after everyone havs seen them."
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="14dp"
+            android:layout_marginLeft="70dp"
+            android:alpha="0.7"
+            android:textSize="12dp"/>
+
+    </RelativeLayout>
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/vanish_msg"
+        android:id="@+id/typing">
+
+        <EditText
+            android:id="@+id/type_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/typing_bg_dark"
+            android:paddingLeft = "30dp"
+            android:paddingRight = "270dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="20dp"
+            android:paddingBottom="20dp"
+            android:paddingTop = "20dp"
+            android:textColorHint= "#C2BAB3"
+
+            android:hint="Typing...."/>
+
+        <ImageView
+            android:id="@+id/send_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/send_icon"
+            android:layout_alignRight="@+id/type_msg"
+            android:layout_alignBottom="@+id/type_msg"
+            android:layout_marginBottom="10dp"
+            android:layout_marginRight="10dp"
+            android:alpha="0.8"
+            />
+
+    </RelativeLayout>
+
+</RelativeLayout>
