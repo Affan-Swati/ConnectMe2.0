@@ -9,12 +9,17 @@ import android.os.CountDownTimer
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.util.Base64
 import android.widget.ProgressBar
+import android.widget.VideoView
+import java.io.File
+import java.io.FileOutputStream
 
 class StoryView : AppCompatActivity() {
 
     private lateinit var storyImageView: ImageView
+    private lateinit var storyVideoView: VideoView
     private lateinit var progressBar: ProgressBar
     private lateinit var deleteButton: TextView
     private lateinit var closeButton: ImageView
@@ -26,9 +31,10 @@ class StoryView : AppCompatActivity() {
         setContentView(R.layout.activity_story_view)
 
         storyImageView = findViewById(R.id.storyImageView)
+        storyVideoView = findViewById(R.id.storyVideoView)
         progressBar = findViewById(R.id.progressBar)
-        deleteButton = findViewById(R.id.delete_btn) // Link to delete button
-        closeButton = findViewById(R.id.close_button) // Link to close button
+        deleteButton = findViewById(R.id.delete_btn)
+        closeButton = findViewById(R.id.close_button)
 
         userId = intent.getStringExtra("userId") ?: FirebaseAuth.getInstance().currentUser?.uid
 
@@ -39,31 +45,42 @@ class StoryView : AppCompatActivity() {
             finish()
         }
 
-        // Set up delete button click listener
-        deleteButton.setOnClickListener {
-            deleteStory()
-        }
-        closeButton.setOnClickListener {
-            finish()
-        }
+        deleteButton.setOnClickListener { deleteStory() }
+        closeButton.setOnClickListener { finish() }
     }
 
     private fun fetchStory(userId: String) {
         databaseRef = FirebaseDatabase.getInstance().getReference("stories").child(userId)
 
-        databaseRef.get().addOnSuccessListener { snapshot ->
+        databaseRef.orderByKey().limitToLast(1).get().addOnSuccessListener { snapshot ->
             if (snapshot.exists()) {
-                val dataUrl = snapshot.child("image").value.toString()
-                if (dataUrl.startsWith("data:image/jpeg;base64,")) {
-                    val base64Part = dataUrl.substring("data:image/jpeg;base64,".length)
-                    val imageBytes = Base64.decode(base64Part, Base64.DEFAULT)
-                    val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-                    storyImageView.setImageBitmap(bitmap)
+                for (storySnapshot in snapshot.children) {
+                    val mediaType = storySnapshot.child("mediaType").value.toString()
+                    val mediaData = storySnapshot.child("mediaData").value.toString()
 
-                    // Start progress bar animation
-                    startProgressBar()
-                } else {
-                    Toast.makeText(this, "Invalid image data", Toast.LENGTH_SHORT).show()
+                    if (mediaType == "image") {
+                        val base64Part = mediaData.substring(mediaData.indexOf(",") + 1)
+                        val imageBytes = Base64.decode(base64Part, Base64.DEFAULT)
+                        val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                        storyImageView.setImageBitmap(bitmap)
+                        storyImageView.visibility = ImageView.VISIBLE
+                        storyVideoView.visibility = VideoView.GONE
+                        startProgressBar()
+                    } else if (mediaType == "video") {
+                        val base64Part = mediaData.substring(mediaData.indexOf(",") + 1)
+                        val videoBytes = Base64.decode(base64Part, Base64.DEFAULT)
+                        val tempFile = File.createTempFile("video", ".mp4", cacheDir)
+                        FileOutputStream(tempFile).use { it.write(videoBytes) }
+                        storyVideoView.setVideoURI(Uri.fromFile(tempFile))
+                        storyVideoView.setOnPreparedListener { mp ->
+                            mp.start()
+                        }
+                        storyVideoView.visibility = VideoView.VISIBLE
+                        storyImageView.visibility = ImageView.GONE
+                        startProgressBar()
+                    } else {
+                        Toast.makeText(this, "Invalid format", Toast.LENGTH_SHORT).show()
+                    }
                 }
             } else {
                 Toast.makeText(this, "No story found", Toast.LENGTH_SHORT).show()
@@ -80,10 +97,9 @@ class StoryView : AppCompatActivity() {
         }
 
         val storyRef = FirebaseDatabase.getInstance().getReference("stories").child(userId!!)
-
         storyRef.removeValue().addOnSuccessListener {
             Toast.makeText(this, "Story deleted successfully", Toast.LENGTH_SHORT).show()
-            finish() // Close activity after deletion
+            finish()
         }.addOnFailureListener {
             Toast.makeText(this, "Failed to delete story", Toast.LENGTH_SHORT).show()
         }
@@ -91,11 +107,10 @@ class StoryView : AppCompatActivity() {
 
     private fun startProgressBar() {
         progressBar.visibility = ProgressBar.VISIBLE
-        progressBar.max = 100  // Full progress is 100%
+        progressBar.max = 100
 
-        val duration = 5000L // 5 seconds (adjust this if needed)
-
-        object : CountDownTimer(duration, 50) { // Updates every 50ms
+        val duration = 5000L
+        object : CountDownTimer(duration, 50) {
             override fun onTick(millisUntilFinished: Long) {
                 val progress = ((duration - millisUntilFinished) * 100 / duration).toInt()
                 progressBar.progress = progress
@@ -103,7 +118,7 @@ class StoryView : AppCompatActivity() {
 
             override fun onFinish() {
                 progressBar.progress = 100
-                finish() // Automatically close the activity when the story is done
+                finish()
             }
         }.start()
     }

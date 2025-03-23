@@ -63,5 +63,6 @@ dependencies {
     implementation (libs.androidx.camera.view)
     implementation (libs.glide)
     kapt("com.github.bumptech.glide:compiler:4.15.1")
+    implementation (libs.androidx.exifinterface)
 
 }
