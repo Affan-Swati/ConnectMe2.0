@@ -4,10 +4,15 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
@@ -15,6 +20,9 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.camera.view.PreviewView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import java.io.ByteArrayOutputStream
 import java.io.File
 
 class StoryCamera : AppCompatActivity() {
@@ -24,9 +32,10 @@ class StoryCamera : AppCompatActivity() {
     private lateinit var flipCamButton: ImageView
     private lateinit var galleryButton: ImageView
     private lateinit var crossButton: ImageView
+    private lateinit var nextButton: TextView
     private var imageCapture: ImageCapture? = null
     private var cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-    private var isGalleryImageSelected = false
+    private var isGalleryImageSelected = false  // Track if gallery image is selected
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +47,7 @@ class StoryCamera : AppCompatActivity() {
         flipCamButton = findViewById(R.id.flip_cam)
         galleryButton = findViewById(R.id.gallery_preview)
         crossButton = findViewById(R.id.cross_button)
+        nextButton = findViewById(R.id.H1)
 
         // Start Camera Preview
         if (allPermissionsGranted()) {
@@ -68,6 +78,11 @@ class StoryCamera : AppCompatActivity() {
         // Clear Selection when pressing the "X" (cross) button
         crossButton.setOnClickListener {
             clearSelection()
+        }
+
+        // Upload story when pressing the Next button
+        nextButton.setOnClickListener {
+            uploadStoryToFirebase()
         }
     }
 
@@ -157,7 +172,7 @@ class StoryCamera : AppCompatActivity() {
         galleryLauncher.launch(galleryIntent)
     }
 
-    // Function to clear gallery selection and restart the camera
+    // Function to clear gallery/camera selection and restart the camera
     private fun clearSelection() {
         if (isGalleryImageSelected || imageView.visibility == ImageView.VISIBLE) {
             // If a gallery image or a camera photo was taken, reset and show camera
@@ -177,6 +192,54 @@ class StoryCamera : AppCompatActivity() {
             finish()
         }
     }
+
+    // Function to upload story to Firebase Realtime Database using a data URI
+    private fun uploadStoryToFirebase() {
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user == null) {
+            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Ensure an image is selected
+        if (imageView.drawable == null) {
+            Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Convert the image in the ImageView to a Bitmap
+        val bitmap = (imageView.drawable as BitmapDrawable).bitmap
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 80, byteArrayOutputStream)
+        val imageBytes = byteArrayOutputStream.toByteArray()
+
+        // Encode the image to Base64 without any extra newlines
+        val base64Image = Base64.encodeToString(imageBytes, Base64.NO_WRAP)
+
+        // Create a data URI that looks like a proper URL
+        val dataUrl = "data:image/jpeg;base64,$base64Image"
+
+        // Prepare story data using the data URI
+        val storyData = hashMapOf(
+            "userId" to user.uid,
+            "timestamp" to System.currentTimeMillis(),
+            "image" to dataUrl  // Save the complete data URI
+        )
+
+        // Upload the story data to Firebase Realtime Database
+        val database = FirebaseDatabase.getInstance().getReference("stories")
+        database.child(user.uid).setValue(storyData)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Story uploaded successfully", Toast.LENGTH_SHORT).show()
+                finish() // Close the activity
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Failed to upload story", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+
+
 
     // Check if permissions are granted
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {

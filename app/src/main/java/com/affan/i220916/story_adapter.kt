@@ -5,7 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 class story_adapter(private val storyList: List<story_model>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -38,21 +41,39 @@ class story_adapter(private val storyList: List<story_model>) : RecyclerView.Ada
         }
 
         // Click event for the first story (User's Story)
-        holder.itemView.setOnLongClickListener {
+        holder.itemView.setOnClickListener {
             val context = holder.itemView.context
-            if (position == 0) {
-                // If it's the first story, go to the story posting activity
-                val intent = Intent(context, StoryCamera::class.java)
-                context.startActivity(intent)
+            val userId = FirebaseAuth.getInstance().currentUser?.uid
+            val databaseRef = FirebaseDatabase.getInstance().getReference("stories").child(userId ?: "")
+
+            databaseRef.get().addOnSuccessListener { snapshot ->
+                if (position == 0)
+                {
+                    if (snapshot.exists())
+                    {
+                        // If the user has uploaded a story, open StoryViewActivity
+                        val intent = Intent(context, StoryView::class.java)
+                        intent.putExtra("userId", userId)
+                        context.startActivity(intent)
+                    } else
+                    {
+                        // If the user has NOT uploaded a story, open StoryCamera
+                        val intent = Intent(context, StoryCamera::class.java)
+                        context.startActivity(intent)
+                    }
+                }
+//                else {
+//                    // If it's a normal story, open StoryViewActivity
+//                    val intent = Intent(context, StoryViewA::class.java)
+//                    intent.putExtra("storyImage", story.profileImage)
+//                    context.startActivity(intent)
+//                }
+            }.addOnFailureListener {
+                Toast.makeText(context, "Failed to check story status", Toast.LENGTH_SHORT).show()
             }
-            //   else {
-//                // If it's a normal story, open story viewer
-//                val intent = Intent(context, StoryViewActivity::class.java)
-//                intent.putExtra("storyImage", story.profileImage)
-//                context.startActivity(intent)
-//            }
             true
         }
+
     }
     override fun getItemCount(): Int {
         return storyList.size
