@@ -23,7 +23,8 @@ class MainActivity : AppCompatActivity() {
         }
         auth = FirebaseAuth.getInstance()
 
-        // Add a delay before starting the login activity
+
+         //Add a delay before starting the login activity
         Handler(Looper.getMainLooper()).postDelayed({
             if(auth.currentUser != null)
             {
@@ -35,6 +36,6 @@ class MainActivity : AppCompatActivity() {
                 var intent = Intent(this, Register::class.java)
                 startActivity(intent)
             }
-        }, 2000) // 2000 milliseconds = 2 seconds
+        }, 1200) // 2000 milliseconds = 2 seconds
     }
 }

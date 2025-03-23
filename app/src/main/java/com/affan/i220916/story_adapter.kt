@@ -1,5 +1,6 @@
 package com.affan.i220916
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +35,23 @@ class story_adapter(private val storyList: List<story_model>) : RecyclerView.Ada
             holder.imageView.setImageResource(storyItem.image)
         } else if (holder is NormalStoryViewHolder) {
             holder.imageView.setImageResource(storyItem.image)
+        }
+
+        // Click event for the first story (User's Story)
+        holder.itemView.setOnLongClickListener {
+            val context = holder.itemView.context
+            if (position == 0) {
+                // If it's the first story, go to the story posting activity
+                val intent = Intent(context, StoryCamera::class.java)
+                context.startActivity(intent)
+            }
+            //   else {
+//                // If it's a normal story, open story viewer
+//                val intent = Intent(context, StoryViewActivity::class.java)
+//                intent.putExtra("storyImage", story.profileImage)
+//                context.startActivity(intent)
+//            }
+            true
         }
     }
     override fun getItemCount(): Int {

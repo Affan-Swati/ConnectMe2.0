@@ -3,7 +3,6 @@ package com.affan.i220916
 import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -53,10 +52,6 @@ class feed : AppCompatActivity() {
             val intent = Intent(this, contacts_tab::class.java)
             startActivity(intent)
         }
-
-        val recyclerViewStories = findViewById<RecyclerView>(R.id.recycler_view_stories)
-        val layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        recyclerViewStories.layoutManager = layoutManager
 
         val user = 1
         val normal = 2

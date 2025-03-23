@@ -42,30 +42,40 @@
         android:layout_marginEnd="15dp"
         android:src="@drawable/share_icon" />
 
-    <!-- Horizontal RecyclerView for Stories -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_stories"
-        android:layout_below="@+id/H2"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingLeft="8dp"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:layout_below="@+id/H2">
 
-        android:scrollbars="none"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-        tools:listitem="@layout/story"/>
+            <!-- Horizontal RecyclerView for Stories -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_stories"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="8dp"
+                android:scrollbars="none"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/story"/>
 
-    <!-- Vertical RecyclerView for Posts -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_posts"
-        android:layout_below="@+id/recycler_view_stories"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_above="@+id/bottom_navigation"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/post"
-        android:background="#F0EBEB"/>
+            <!-- Vertical RecyclerView for Posts -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_posts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/post"
+                android:nestedScrollingEnabled="false"
+                android:background="#F0EBEB"/>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
 
     <LinearLayout
         android:id="@+id/bottom_navigation"
