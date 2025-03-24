@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "619863352858",
+    "project_id": "i220916",
+    "storage_bucket": "i220916.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:619863352858:android:3376534cc2894e632e53a3",
+        "android_client_info": {
+          "package_name": "com.affan.i220916"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbevtvEIadn7a_usZRpO9BWTgnqEABpLU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
