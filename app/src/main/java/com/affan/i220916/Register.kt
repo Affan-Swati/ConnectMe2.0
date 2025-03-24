@@ -80,8 +80,8 @@ class Register : AppCompatActivity() {
         }
     }
 }
-
 // Data model for user
+
 data class User(
     val name: String = "",
     val username: String = "",
