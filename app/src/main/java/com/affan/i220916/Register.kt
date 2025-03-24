@@ -10,9 +10,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 class Register : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
+    private lateinit var database: DatabaseReference
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -22,6 +26,10 @@ class Register : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        auth = FirebaseAuth.getInstance()
+        database = FirebaseDatabase.getInstance().reference.child("users") // Firebase "users" node
+
         val name = findViewById<EditText>(R.id.name)
         val username = findViewById<EditText>(R.id.username)
         val phone = findViewById<EditText>(R.id.phone_no)
@@ -30,43 +38,55 @@ class Register : AppCompatActivity() {
 
         val loginButton = findViewById<TextView>(R.id.login_button)
         loginButton.setOnClickListener {
-            val intent = Intent(this, login::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, login::class.java))
             finish()
         }
-        auth = FirebaseAuth.getInstance()
 
         val registerButton = findViewById<TextView>(R.id.register)
         registerButton.setOnClickListener {
-
             val name2 = name.text.toString()
             val username2 = username.text.toString()
             val phone2 = phone.text.toString()
             val email2 = email.text.toString()
             val pass2 = pass.text.toString()
 
-            if (email2.isEmpty() || pass2.isEmpty() || name2.isEmpty() || username2.isEmpty() || phone2.isEmpty())
-            {
+            if (email2.isEmpty() || pass2.isEmpty() || name2.isEmpty() || username2.isEmpty() || phone2.isEmpty()) {
                 Toast.makeText(this, "Please fill all the fields", Toast.LENGTH_SHORT).show()
-            }
-            else
-            {
+            } else {
                 auth.createUserWithEmailAndPassword(email2, pass2)
                     .addOnCompleteListener(this) { task ->
-                        if (task.isSuccessful)
-                        {
-                            Toast.makeText(this, "Account created successfully", Toast.LENGTH_SHORT).show()
-                            finish()
-                            val intent = Intent(this, login::class.java)
-                            startActivity(intent)
-                        }
-                        else
-                        {
+                        if (task.isSuccessful) {
+                            val userId = auth.currentUser?.uid
+                            if (userId != null) {
+                                // Create a user object
+                                val user = User(name2, username2, phone2, email2, userId, "https://example.com/affan_pfp.jpg")
+
+                                // Store in Firebase
+                                database.child(userId).setValue(user)
+                                    .addOnSuccessListener {
+                                        Toast.makeText(this, "Account created successfully", Toast.LENGTH_SHORT).show()
+                                        startActivity(Intent(this, login::class.java))
+                                        finish()
+                                    }
+                                    .addOnFailureListener {
+                                        Toast.makeText(this, "Failed to save user data", Toast.LENGTH_SHORT).show()
+                                    }
+                            }
+                        } else {
                             Toast.makeText(this, "Account creation failed", Toast.LENGTH_SHORT).show()
                         }
                     }
             }
-
         }
     }
 }
+
+// Data model for user
+data class User(
+    val name: String = "",
+    val username: String = "",
+    val phone: String = "",
+    val email: String = "",
+    val userId: String = "",
+    val profileImageUrl: String = "" // Default profile image URL
+)
