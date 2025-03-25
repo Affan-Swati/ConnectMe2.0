@@ -42,19 +42,19 @@
         android:src="@drawable/cross_icon" />
 
     <ImageView
-        android:id="@+id/pfp"
-        android:layout_width="300dp"
+        android:id="@+id/selected_photo"
+        android:layout_width="200dp"
         android:layout_height="300dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="7dp"
         android:layout_below="@+id/H1"
-        android:src="@drawable/affan_pfp"/>
+        android:background="#FCF5FD"/>
 
     <TextView
         android:id="@+id/H3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/pfp"
+        android:layout_below="@+id/selected_photo"
         android:layout_alignLeft="@+id/cross_button"
         android:layout_marginTop="10dp"
         android:text="Recents"
@@ -75,7 +75,7 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_toRightOf="@+id/H3"
-        android:layout_below="@+id/pfp"
+        android:layout_below="@+id/selected_photo"
         android:layout_marginTop="11dp"
         android:layout_marginLeft="215dp"
         android:src="@drawable/album_icon"/>
@@ -85,7 +85,7 @@
         android:layout_width="42dp"
         android:layout_height="42dp"
         android:layout_toRightOf="@+id/H3"
-        android:layout_below="@+id/pfp"
+        android:layout_below="@+id/selected_photo"
         android:layout_marginTop="5dp"
         android:layout_marginLeft="250dp"
         android:src="@drawable/camera_icon"/>

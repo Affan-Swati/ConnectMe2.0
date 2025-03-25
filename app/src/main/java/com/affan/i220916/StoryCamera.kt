@@ -7,12 +7,10 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import android.media.ThumbnailUtils
 import android.net.Uri
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
-import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.MediaController
 import android.widget.TextView
