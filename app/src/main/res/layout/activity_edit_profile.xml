@@ -8,7 +8,6 @@
     android:layout_height="match_parent"
     tools:context=".edit_profile">
 
-
     <TextView
         android:id="@+id/h1"
         android:layout_width="wrap_content"
@@ -18,13 +17,11 @@
         android:layout_marginTop="30dp"
         android:textSize="30dp"
         android:layout_marginLeft="20dp"
-        android:textStyle="bold"
-
-        />
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/done_btn"
-        android:layout_toRightOf="@+id/h1"
+        android:layout_toRightOf="@id/h1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Done"
@@ -32,9 +29,9 @@
         android:textColor="#59442F"
         android:textSize="25dp"
         android:layout_marginLeft="140dp"
-        android:layout_marginTop="35dp"
-        />
+        android:layout_marginTop="35dp"/>
 
+    <!-- Profile Picture -->
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/pfp"
         android:layout_width="150dp"
@@ -42,8 +39,9 @@
         android:layout_below="@+id/h1"
         android:layout_centerInParent="true"
         android:layout_marginTop="15dp"
-        android:src="@drawable/affan_pfp"
         android:alpha="0.7"
+        android:clickable="true"
+        android:focusable="true"
         app:shapeAppearanceOverlay="@style/CircleShape"/>
 
     <ImageView
@@ -51,27 +49,26 @@
         android:layout_height="60dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="130dp"
-        android:src="@drawable/camera_icon"
-        />
+        android:src="@drawable/camera_icon"/>
 
     <TextView
-        android:id="@+id/name"
-        android:layout_below="@+id/pfp"
+        android:id="@+id/name_text"
+        android:layout_below="@id/pfp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Affan Ahmad"
         android:textColor="#313133"
         android:layout_marginTop="10dp"
         android:textSize="25dp"
-        android:layout_centerHorizontal="true"
-        />
+        android:layout_centerHorizontal="true"/>
 
+    <!-- Name Input Field -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/name_field"
         android:layout_alignLeft="@id/h1"
-        android:layout_below="@+id/name"
+        android:layout_below="@id/name_text"
         android:layout_marginTop="20dp"
         android:orientation="vertical">
 
@@ -81,24 +78,25 @@
             android:text="Name"
             android:textStyle="bold"
             android:textColor="#59442F"
-            android:textSize="20dp"
-            />
+            android:textSize="20dp"/>
+
         <EditText
+            android:id="@+id/name_input"
             android:layout_width="360dp"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_brown_border"
-            android:hint="Affan Ahmad"
+            android:hint="Enter your name"
             android:padding="10dp"
             android:layout_marginTop="6dp"/>
-
     </LinearLayout>
 
+    <!-- Username Input Field -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/username_field"
         android:layout_alignLeft="@id/h1"
-        android:layout_below="@+id/name_field"
+        android:layout_below="@id/name_field"
         android:layout_marginTop="15dp"
         android:orientation="vertical">
 
@@ -108,24 +106,25 @@
             android:text="Username"
             android:textStyle="bold"
             android:textColor="#59442F"
-            android:textSize="20dp"
-            />
+            android:textSize="20dp"/>
+
         <EditText
+            android:id="@+id/username_input"
             android:layout_width="360dp"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_brown_border"
-            android:hint="affan_2004"
+            android:hint="Enter your username"
             android:padding="10dp"
             android:layout_marginTop="6dp"/>
-
     </LinearLayout>
 
+    <!-- Contact Number Input Field -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/contact_field"
         android:layout_alignLeft="@id/h1"
-        android:layout_below="@+id/username_field"
+        android:layout_below="@id/username_field"
         android:layout_marginTop="15dp"
         android:orientation="vertical">
 
@@ -135,26 +134,27 @@
             android:text="Contact Number"
             android:textStyle="bold"
             android:textColor="#59442F"
-            android:textSize="20dp"
-            />
+            android:textSize="20dp"/>
+
         <EditText
+            android:id="@+id/contact_input"
             android:layout_width="360dp"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_brown_border"
-            android:hint="+92 333 5216494"
+            android:hint="Enter your contact number"
             android:padding="10dp"
             android:layout_marginTop="6dp"/>
-
     </LinearLayout>
 
+    <!-- Bio Input Field -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/bio_field"
         android:layout_alignLeft="@id/h1"
-        android:layout_below="@+id/contact_field"
+        android:layout_below="@id/contact_field"
         android:layout_marginTop="35dp"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
@@ -162,35 +162,16 @@
             android:text="Bio"
             android:textStyle="bold"
             android:textColor="#59442F"
-            android:textSize="20dp"
-            android:layout_marginLeft="10dp"
-            />
+            android:textSize="20dp"/>
+
         <EditText
-            android:layout_width="250dp"
+            android:id="@+id/bio_input"
+            android:layout_width="360dp"
             android:layout_height="wrap_content"
-            android:hint="Just an average 20 year old"
+            android:background="@drawable/rounded_brown_border"
+            android:hint="Write something about yourself"
             android:padding="10dp"
-            android:layout_marginLeft="35dp"
-            style="@style/CustomEditText"/>
-
+            android:layout_marginTop="6dp"/>
     </LinearLayout>
-
-
-
-
-
-    <!--    <EditText-->
-<!--        android:id="@+id/search"-->
-<!--        android:layout_below="@+id/h1"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="70dp"-->
-<!--        android:hint="Search"-->
-<!--        android:paddingLeft="20dp"-->
-<!--        android:layout_marginTop="5dp"-->
-<!--        android:background="@android:color/transparent"-->
-
-<!--        />-->
-
-
 
 </RelativeLayout>
