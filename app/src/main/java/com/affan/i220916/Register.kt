@@ -59,7 +59,7 @@ class Register : AppCompatActivity() {
                             val userId = auth.currentUser?.uid
                             if (userId != null) {
                                 // Create a user object
-                                val user = User(name2, username2, phone2, email2, userId, "https://example.com/affan_pfp.jpg")
+                                val user = User(name2, username2, phone2, email2, userId)
 
                                 // Store in Firebase
                                 database.child(userId).setValue(user)

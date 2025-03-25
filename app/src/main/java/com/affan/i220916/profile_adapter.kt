@@ -1,6 +1,7 @@
 package com.affan.i220916
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.affan.i220916.databinding.ProfileItemBinding
@@ -20,28 +21,29 @@ class profile_adapter(private val profiles: List<profile_model>) : RecyclerView.
 
     inner class ProfileViewHolder(private val binding: ProfileItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(profile: profile_model) {
-            profile.postImage1?.let {
-                binding.img1.setImageResource(it)
+            // Load Bitmaps directly
+            if (profile.postImage1 != null) {
+                binding.img1.setImageBitmap(profile.postImage1)
                 binding.img1.setBackgroundResource(R.drawable.brown_frame)
-            } ?: run {
-                binding.img1.setImageDrawable(null)
-                binding.img1.background = null
+                binding.img1.visibility = View.VISIBLE
+            } else {
+                binding.img1.visibility = View.GONE
             }
 
-            profile.postImage2?.let {
-                binding.img2.setImageResource(it)
+            if (profile.postImage2 != null) {
+                binding.img2.setImageBitmap(profile.postImage2)
                 binding.img2.setBackgroundResource(R.drawable.brown_frame)
-            } ?: run {
-                binding.img2.setImageDrawable(null)
-                binding.img2.background = null
+                binding.img2.visibility = View.VISIBLE
+            } else {
+                binding.img2.visibility = View.GONE
             }
 
-            profile.postImage3?.let {
-                binding.img3.setImageResource(it)
+            if (profile.postImage3 != null) {
+                binding.img3.setImageBitmap(profile.postImage3)
                 binding.img3.setBackgroundResource(R.drawable.brown_frame)
-            } ?: run {
-                binding.img3.setImageDrawable(null)
-                binding.img3.background = null
+                binding.img3.visibility = View.VISIBLE
+            } else {
+                binding.img3.visibility = View.GONE
             }
         }
     }
