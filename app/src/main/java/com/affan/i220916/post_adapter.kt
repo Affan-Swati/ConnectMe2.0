@@ -1,16 +1,12 @@
 package com.affan.i220916
 
-import android.graphics.Typeface
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.StyleSpan
+import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 
 class post_adapter(private val postList: List<post_model>) : RecyclerView.Adapter<post_adapter.PostViewHolder>() {
 
@@ -23,23 +19,24 @@ class post_adapter(private val postList: List<post_model>) : RecyclerView.Adapte
         val post = postList[position]
         holder.userName.text = post.userName
 
-        // Load images using Glide (from URL)
-        Glide.with(holder.itemView.context)
-            .load(post.userImage) // Load user profile image
-            .placeholder(R.drawable.affan_pfp) // Use default placeholder image
-            .into(holder.userImage)
+        // Load profile image if available, else set default placeholder
+        if (post.userImage != null) {
+            holder.userImage.setImageBitmap(post.userImage)
+        } else {
+            holder.userImage.setImageResource(R.drawable.affan_pfp) // Default profile image
+        }
 
-        Glide.with(holder.itemView.context)
-            .load(post.postImage) // Load post image
-            .placeholder(R.drawable.default_feed_pic) // Use default placeholder image
-            .into(holder.postImage)
+        // Load post image if available, else set default placeholder
+        if (post.postImage != null) {
+            holder.postImage.setImageBitmap(post.postImage)
+        } else {
+            holder.postImage.setImageResource(R.drawable.default_feed_pic) // Default post image
+        }
 
-        // Bold username in caption
+        // Set formatted caption with bold username
         val username = post.userName
         val caption = post.caption
-        val spannableString = SpannableString("$username $caption")
-        spannableString.setSpan(StyleSpan(Typeface.BOLD), 0, username.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        holder.caption.text = spannableString
+        holder.caption.text = "$username: $caption"
     }
 
     override fun getItemCount(): Int {
