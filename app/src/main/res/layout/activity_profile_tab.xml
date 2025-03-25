@@ -54,7 +54,7 @@
 
 
     <TextView
-        android:id="@+id/H2"
+        android:id="@+id/name"
         android:layout_below="@+id/pfp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -66,7 +66,7 @@
 
     <TextView
         android:id="@+id/bio"
-        android:layout_below="@+id/H2"
+        android:layout_below="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="two bananas for a pound, three bananas \nfor a euro"
@@ -90,6 +90,7 @@
             android:layout_marginLeft="60dp">
 
             <TextView
+                android:id="@+id/post_count"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="7"
@@ -114,6 +115,7 @@
             android:id="@+id/followers_btn">
 
             <TextView
+                android:id="@+id/follower_count"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="410"
@@ -138,6 +140,7 @@
             android:id="@+id/following_btn">
 
             <TextView
+                android:id="@+id/following_count"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="387"
