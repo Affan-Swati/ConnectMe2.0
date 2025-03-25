@@ -5,39 +5,32 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.provider.Settings
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import java.io.ByteArrayOutputStream
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.util.Base64
 
 class new_post_gallery : AppCompatActivity() {
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            loadGalleryImages()
-        } else {
-            Toast.makeText(this, "Enable permission in settings", Toast.LENGTH_LONG).show()
-            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-            intent.data = Uri.fromParts("package", packageName, null)
-            startActivity(intent)
-        }
-    }
-
     private var selectedImageUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_new_post_gallery)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -56,7 +49,7 @@ class new_post_gallery : AppCompatActivity() {
         if (ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED) {
             loadGalleryImages()
         } else {
-            requestPermissionLauncher.launch(permission)
+            requestPermissions(arrayOf(permission), 101)
         }
 
         findViewById<ImageView>(R.id.cross_button).setOnClickListener { finish() }
@@ -64,7 +57,6 @@ class new_post_gallery : AppCompatActivity() {
             finish()
             startActivity(Intent(this, new_post_camera::class.java))
         }
-
     }
 
     private fun loadGalleryImages() {
@@ -109,12 +101,11 @@ class new_post_gallery : AppCompatActivity() {
         val nextButton = findViewById<TextView>(R.id.H2)
         nextButton.setOnClickListener {
             if (selectedImageUri != null) {
-                val intent = Intent(this, new_post_share::class.java).apply {
-                    putExtra("SELECTED_IMAGE_URI", selectedImageUri.toString())
-                }
+                val intent = Intent(this, new_post_share::class.java)
+                intent.putExtra("SELECTED_IMAGE", selectedImageUri.toString())
                 startActivity(intent)
             } else {
-                Toast.makeText(this, "Please select an image first", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "No image selected!", Toast.LENGTH_SHORT).show()
             }
         }
     }

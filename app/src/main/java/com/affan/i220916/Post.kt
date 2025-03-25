@@ -1,12 +1,19 @@
 package com.affan.i220916
 
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 data class Post(
-    val imageUri: String = "",
+    val imageBase64: String = "",
     val caption: String = "",
     val userId: String = "",
-    val userName: String = "",
-    val userImage: String = "", // Store user profile image
-    val timestamp: Long = System.currentTimeMillis()
+    val likes: Int = 0,
+    val comments: List<String> = emptyList(),
+    val timestamp: String = getCurrentTimestamp()
 )
+
+fun getCurrentTimestamp(): String {
+    val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+    return sdf.format(Date())
+}
