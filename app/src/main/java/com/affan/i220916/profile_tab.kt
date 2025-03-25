@@ -102,27 +102,16 @@ class profile_tab : AppCompatActivity() {
         postsRef.orderByChild("userId").equalTo(userId).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 profileList.clear()
-                val tempPostList = mutableListOf<Bitmap>()
 
                 for (postSnapshot in snapshot.children) {
                     val imageBase64 = postSnapshot.child("imageBase64").getValue(String::class.java) ?: ""
                     val bitmap = decodeBase64ToBitmap(imageBase64)
                     if (bitmap != null) {
-                        tempPostList.add(bitmap)
+                        profileList.add(profile_model(bitmap))  // 1 image per item
                     }
                 }
 
-                postCountText.text = tempPostList.size.toString()
-
-                // Group images into sets of 3 for the profile grid
-                for (i in tempPostList.indices step 3) {
-                    val img1 = tempPostList.getOrNull(i)
-                    val img2 = tempPostList.getOrNull(i + 1)
-                    val img3 = tempPostList.getOrNull(i + 2)
-
-                    profileList.add(profile_model(img1, img2, img3))
-                }
-
+                postCountText.text = profileList.size.toString()
                 profileAdapter.notifyDataSetChanged()
             }
 
@@ -131,7 +120,6 @@ class profile_tab : AppCompatActivity() {
             }
         })
     }
-
     private fun setupNavigation() {
         findViewById<ImageView>(R.id.home_btn).setOnClickListener {
             startActivity(Intent(this, feed::class.java))

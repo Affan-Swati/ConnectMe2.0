@@ -4,11 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
 
-data class profile_model(
-    val postImage1: Bitmap? = null,
-    val postImage2: Bitmap? = null,
-    val postImage3: Bitmap? = null
-)
+data class profile_model(val postImage: Bitmap? = null)
 
 fun decodeBase64ToBitmap(base64String: String?): Bitmap? {
     return try {
