@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 
 class post_adapter(private val postList: List<post_model>) : RecyclerView.Adapter<post_adapter.PostViewHolder>() {
 
@@ -21,9 +22,19 @@ class post_adapter(private val postList: List<post_model>) : RecyclerView.Adapte
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = postList[position]
         holder.userName.text = post.userName
-        holder.userImage.setImageResource(post.userImage)
-        holder.postImage.setImageResource(post.postImage)
 
+        // Load images using Glide (from URL)
+        Glide.with(holder.itemView.context)
+            .load(post.userImage) // Load user profile image
+            .placeholder(R.drawable.affan_pfp) // Use default placeholder image
+            .into(holder.userImage)
+
+        Glide.with(holder.itemView.context)
+            .load(post.postImage) // Load post image
+            .placeholder(R.drawable.default_feed_pic) // Use default placeholder image
+            .into(holder.postImage)
+
+        // Bold username in caption
         val username = post.userName
         val caption = post.caption
         val spannableString = SpannableString("$username $caption")

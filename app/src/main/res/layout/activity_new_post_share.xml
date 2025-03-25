@@ -29,22 +29,42 @@
         android:src="@drawable/cross_icon" />
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginTop="25dp"
-        android:id="@+id/recycler_view_share"
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:layout_marginTop="25dp"-->
+<!--        android:id="@+id/recycler_view_share"-->
+<!--        android:layout_below="@+id/cross_button"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="360dp"-->
+<!--        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
+<!--        tools:listitem="@layout/post_share_item"/>-->
+
+
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/selected"
         android:layout_below="@+id/cross_button"
-        android:layout_width="match_parent"
-        android:layout_height="360dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/post_share_item"/>
+        app:cardCornerRadius="10dp"
+        app:cardElevation="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp">
+
+        <ImageView
+            android:id="@+id/selected_image"
+            android:layout_width="280dp"
+            android:layout_height="360dp"
+            android:background="#FCF5FD"
+            android:scaleType="centerCrop"/>
+    </com.google.android.material.card.MaterialCardView>
 
     <EditText
         android:id="@+id/caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/typing_bg_l"
-        android:layout_below="@+id/recycler_view_share"
-        android:layout_alignLeft="@+id/recycler_view_share"
+        android:layout_below="@+id/selected"
+        android:layout_centerHorizontal="true"
         android:paddingLeft = "30dp"
         android:paddingRight = "200dp"
         android:layout_marginLeft="20dp"
