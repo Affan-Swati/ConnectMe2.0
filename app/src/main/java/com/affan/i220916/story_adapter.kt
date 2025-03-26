@@ -1,16 +1,26 @@
 package com.affan.i220916
 
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
-class story_adapter(private val storyList: List<story_model>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class story_adapter(
+    private val storyList: MutableList<story_model>,
+    private val database: DatabaseReference
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private val CURRENT_USER_ID = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
     companion object {
         const val USER_STORY = 1
@@ -32,52 +42,52 @@ class story_adapter(private val storyList: List<story_model>) : RecyclerView.Ada
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val storyItem = storyList[position]
+        val story = storyList[position]
 
-        if (holder is OurStoryViewHolder) {
-            holder.imageView.setImageResource(storyItem.image)
-        } else if (holder is NormalStoryViewHolder) {
-            holder.imageView.setImageResource(storyItem.image)
+        // Load PFP (using Glide for better performance)
+        val imageBytes = Base64.decode(story.profileImageBase64, Base64.DEFAULT)
+        val bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+
+        when (holder) {
+            is OurStoryViewHolder -> holder.imageView.setImageBitmap(bitmap)
+            is NormalStoryViewHolder -> holder.imageView.setImageBitmap(bitmap)
         }
 
-        // Click event for the first story (User's Story)
         holder.itemView.setOnClickListener {
             val context = holder.itemView.context
-            val userId = FirebaseAuth.getInstance().currentUser?.uid
-            val databaseRef = FirebaseDatabase.getInstance().getReference("stories").child(userId ?: "")
 
-            databaseRef.get().addOnSuccessListener { snapshot ->
-                if (position == 0)
-                {
-                    if (snapshot.exists())
-                    {
-                        // If the user has uploaded a story, open StoryViewActivity
-                        val intent = Intent(context, StoryView::class.java)
-                        intent.putExtra("userId", userId)
-                        context.startActivity(intent)
-                    } else
-                    {
-                        // If the user has NOT uploaded a story, open StoryCamera
-                        val intent = Intent(context, StoryCamera::class.java)
+            if (position == 0) {
+                // Current user's story - check if exists
+                database.child("stories").child(story.userId).get()
+                    .addOnSuccessListener { snapshot ->
+                        val intent = if (snapshot.exists()) {
+                            Intent(context, StoryView::class.java).apply {
+                                putExtra("userId", story.userId)
+                            }
+                        } else {
+                            Intent(context, StoryCamera::class.java)
+                        }
                         context.startActivity(intent)
                     }
-                }
-//                else {
-//                    // If it's a normal story, open StoryViewActivity
-//                    val intent = Intent(context, StoryViewA::class.java)
-//                    intent.putExtra("storyImage", story.profileImage)
-//                    context.startActivity(intent)
-//                }
-            }.addOnFailureListener {
-                Toast.makeText(context, "Failed to check story status", Toast.LENGTH_SHORT).show()
+            } else {
+                // Other user's story - guaranteed to exist
+                Intent(context, StoryView::class.java).apply {
+                    putExtra("userId", story.userId)
+                }.also { context.startActivity(it) }
             }
-            true
         }
+    }
 
+    fun updateList(newList: List<story_model>) {
+
+        storyList.clear()
+        storyList.addAll(newList.reversed())
+
+        notifyDataSetChanged()
     }
-    override fun getItemCount(): Int {
-        return storyList.size
-    }
+
+
+    override fun getItemCount(): Int = storyList.size
 
     class OurStoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imageView: ImageView = itemView.findViewById(R.id.our_story)
