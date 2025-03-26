@@ -62,6 +62,7 @@ class search_tab : AppCompatActivity() {
         search_list.add(search_model("Haroon"))
         search_list.add(search_model("Junaid"))
 
+
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = search_adapter(search_list)
