@@ -81,10 +81,12 @@ class story_adapter(
     fun updateList(newList: List<story_model>) {
 
         storyList.clear()
-        storyList.addAll(newList.reversed())
-
+        storyList.addAll(newList)
         notifyDataSetChanged()
     }
+
+
+
 
 
     override fun getItemCount(): Int = storyList.size

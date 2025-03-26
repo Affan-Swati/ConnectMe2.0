@@ -66,6 +66,7 @@ class feed : AppCompatActivity() {
         storyAdapter = story_adapter(storyList, FirebaseDatabase.getInstance().reference)
         recyclerViewStories.adapter = storyAdapter
 
+        deleteExpiredStories()
         loadStories()
         fetchPostsFromFirebase()
     }
@@ -93,56 +94,88 @@ class feed : AppCompatActivity() {
     private fun loadStories() {
         val storyRef = FirebaseDatabase.getInstance().getReference("stories")
         val usersRef = FirebaseDatabase.getInstance().getReference("users")
-        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val storiesList = mutableListOf<story_model>()
+        var userStory: story_model? = null  // Store current user's story separately
 
-        storyRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (!snapshot.exists()) {
-                    Log.d("FirebaseDebug", "❌ No stories found!")
-                    return
-                }
+        // Fetch all users first to count them
+        usersRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(usersSnapshot: DataSnapshot) {
+                val totalUsers = usersSnapshot.childrenCount.toInt()
+                var processedUsers = 0
 
-                val storiesList = mutableListOf<story_model>()
-                var userStory: story_model? = null  // Store current user's story separately
+                // Fetch current user details first
+                usersRef.child(currentUserId).addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(userSnap: DataSnapshot) {
+                        val profileImage = userSnap.child("profileImageBase64").value?.toString() ?: ""
 
-                for (userSnapshot in snapshot.children) {
-                    val userId = userSnapshot.key ?: continue
+                        // Always add current user at the start, even if they have no story
+                        userStory = story_model(
+                            type = story_adapter.USER_STORY,  // 0 = USER_STORY
+                            userId = currentUserId,
+                            profileImageBase64 = profileImage
+                        )
+                        storiesList.add(0, userStory!!)  // Always keep current user first
+                        processedUsers++
 
-                    if (userSnapshot.childrenCount > 0) {
-                        usersRef.child(userId).addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onDataChange(userSnap: DataSnapshot) {
-                                val profileImage = userSnap.child("profileImageBase64").value?.toString() ?: ""
-                                val type = if (userId == currentUserId) 0 else 1  // 0 = USER_STORY, 1 = OTHER_STORY
-                                val story = story_model(type, userId, profileImage)
-
-                                if (userId == currentUserId) {
-                                    userStory = story  // Store user story separately
-                                } else {
-                                    storiesList.add(story)
-                                }
-
-                                // Only update RecyclerView after processing all users
-                                if ((storiesList.size + if (userStory != null) 1 else 0).toLong() == snapshot.childrenCount)
-                                {
-                                    userStory?.let { storiesList.add(0, it) }  // Always add user story at index 0
-                                    storyAdapter.updateList(storiesList)
-                                }
-                            }
-
-                            override fun onCancelled(error: DatabaseError) {
-                                Log.e("FirebaseDebug", "❌ Error fetching user details: ${error.message}")
-                            }
-                        })
+                        // Check if all users are processed
+                        if (processedUsers == totalUsers) {
+                            storyAdapter.updateList(storiesList)
+                        }
                     }
-                }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        Log.e("FirebaseDebug", "❌ Error fetching current user details: ${error.message}")
+                    }
+                })
+
+                // Now fetch other users' stories
+                storyRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if (snapshot.exists()) {
+                            for (userSnapshot in snapshot.children) {
+                                val userId = userSnapshot.key ?: continue
+                                if (userId == currentUserId) continue  // Skip if it's the current user
+
+                                usersRef.child(userId).addListenerForSingleValueEvent(object : ValueEventListener {
+                                    override fun onDataChange(userSnap: DataSnapshot) {
+                                        val profileImage = userSnap.child("profileImageBase64").value?.toString() ?: ""
+                                        val story = story_model(
+                                            type = story_adapter.OTHER_STORY, // 1 = OTHER_STORY
+                                            userId = userId,
+                                            profileImageBase64 = profileImage
+                                        )
+                                        storiesList.add(story)
+                                        processedUsers++
+
+                                        // Check if all users are processed
+                                        if (processedUsers == totalUsers) {
+                                            storyAdapter.updateList(storiesList)
+                                        }
+                                    }
+
+                                    override fun onCancelled(error: DatabaseError) {
+                                        Log.e("FirebaseDebug", "❌ Error fetching user details: ${error.message}")
+                                    }
+                                })
+                            }
+                        } else {
+                            // No other stories exist, just update with current user's icon
+                            storyAdapter.updateList(storiesList)
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        Log.e("FirebaseDebug", "❌ Error loading stories: ${error.message}")
+                    }
+                })
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.e("FirebaseDebug", "❌ Error loading stories: ${error.message}")
+                Log.e("FirebaseDebug", "❌ Error fetching users: ${error.message}")
             }
         })
     }
-
 
     private fun fetchPostsFromFirebase() {
         database = FirebaseDatabase.getInstance().getReference("posts")
@@ -180,6 +213,40 @@ class feed : AppCompatActivity() {
 
             override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(this@feed, "Failed to load posts: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun deleteExpiredStories() {
+        val storyRef = FirebaseDatabase.getInstance().getReference("stories")
+        val currentTime = System.currentTimeMillis()
+
+        Log.d("StoryCleanup", "⏳ Checking for expired stories at $currentTime")
+
+        storyRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (userSnapshot in snapshot.children) {  // Iterate through users
+                    for (storySnapshot in userSnapshot.children) { // Iterate through their stories
+                        val timestamp = storySnapshot.child("timestamp").getValue(Long::class.java)
+
+                        if (timestamp != null) {
+                            val timeElapsed = currentTime - timestamp
+                            Log.d("StoryCleanup", "🕒 Story ${storySnapshot.key} posted at: $timestamp, elapsed time: $timeElapsed ms")
+
+                            if (timeElapsed >= 24 * 60 * 60 * 1000) {
+                                storySnapshot.ref.removeValue()
+                                    .addOnSuccessListener { Log.d("StoryCleanup", "✅ Story ${storySnapshot.key} deleted successfully.") }
+                                    .addOnFailureListener { Log.e("StoryCleanup", "❌ Failed to delete ${storySnapshot.key}") }
+                            }
+                        } else {
+                            Log.e("StoryCleanup", "⚠️ Story ${storySnapshot.key} has no timestamp!")
+                        }
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("FirebaseError", "❌ Error fetching stories: ${error.message}")
             }
         })
     }
