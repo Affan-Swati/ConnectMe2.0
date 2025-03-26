@@ -115,13 +115,12 @@ class feed : AppCompatActivity() {
                             userId = currentUserId,
                             profileImageBase64 = profileImage
                         )
-                        storiesList.add(0, userStory!!)  // Always keep current user first
+                        Log.e("FirebaseDebug", " Current Added to list")
+                        storiesList.add(userStory!!)  // Always keep current user first
                         processedUsers++
 
                         // Check if all users are processed
-                        if (processedUsers == totalUsers) {
-                            storyAdapter.updateList(storiesList)
-                        }
+                        storyAdapter.updateList(storiesList)
                     }
 
                     override fun onCancelled(error: DatabaseError) {
@@ -145,13 +144,14 @@ class feed : AppCompatActivity() {
                                             userId = userId,
                                             profileImageBase64 = profileImage
                                         )
+                                        Log.e("FirebaseDebug", " Other Added to list")
                                         storiesList.add(story)
                                         processedUsers++
 
                                         // Check if all users are processed
-                                        if (processedUsers == totalUsers) {
-                                            storyAdapter.updateList(storiesList)
-                                        }
+
+                                        storyAdapter.updateList(storiesList)
+
                                     }
 
                                     override fun onCancelled(error: DatabaseError) {
