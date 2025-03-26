@@ -50,11 +50,11 @@
         android:layout_below="@+id/h1"
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="262dp"
+        android:layout_height="match_parent"
         android:layout_marginTop="16dp"
+        android:layout_above="@+id/bottom_navigation"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/search_item"/>
-
 
     <LinearLayout
         android:id="@+id/bottom_navigation"

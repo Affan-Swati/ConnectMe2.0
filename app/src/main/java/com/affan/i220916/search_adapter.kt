@@ -4,13 +4,15 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class search_adapter(private val items: List<search_model>) : RecyclerView.Adapter<search_adapter.searchViewHolder>() {
+class search_adapter(private val items: MutableList<search_model>) : RecyclerView.Adapter<search_adapter.searchViewHolder>() {
 
     class searchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val userName: TextView = itemView.findViewById(R.id.username)
+        val cross: ImageView = itemView.findViewById(R.id.cross)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): searchViewHolder {
@@ -22,6 +24,12 @@ class search_adapter(private val items: List<search_model>) : RecyclerView.Adapt
     override fun onBindViewHolder(holder: searchViewHolder, position: Int) {
         val item = items[position]
         holder.userName.text = item.userName
+
+        holder.cross.setOnClickListener {
+            items.removeAt(position)
+            notifyItemRemoved(position)
+            notifyItemRangeChanged(position, items.size) // Refresh indices
+        }
     }
 
     override fun getItemCount(): Int = items.size
