@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Base64
+import android.util.Log
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -18,9 +19,13 @@ import com.google.firebase.database.*
 
 class feed : AppCompatActivity() {
     private lateinit var database: DatabaseReference
+    private lateinit var auth: FirebaseAuth
     private lateinit var recyclerViewPosts: RecyclerView
+    private lateinit var recyclerViewStories: RecyclerView
     private lateinit var postAdapter: post_adapter
+    private lateinit var storyAdapter: story_adapter
     private val postList = mutableListOf<post_model>()
+    private val storyList: MutableList<story_model> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,12 +38,33 @@ class feed : AppCompatActivity() {
             insets
         }
 
+        auth = FirebaseAuth.getInstance()
+        database = FirebaseDatabase.getInstance().reference
+
+        FirebaseDatabase.getInstance().reference.child(".info/connected")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val isConnected = snapshot.getValue(Boolean::class.java) ?: false
+                    Log.d("FirebaseDebug", "🔥 Firebase Connected: $isConnected")
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("FirebaseDebug", "❌ Firebase Connection Check Failed: ${error.message}")
+                }
+            })
+
         setupNavigation()
 
+        // Initialize RecyclerViews
         recyclerViewPosts = findViewById(R.id.recycler_view_posts)
         recyclerViewPosts.layoutManager = LinearLayoutManager(this)
         postAdapter = post_adapter(postList)
         recyclerViewPosts.adapter = postAdapter
+
+        recyclerViewStories = findViewById(R.id.recycler_view_stories)
+        recyclerViewStories.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        storyAdapter = story_adapter(storyList, FirebaseDatabase.getInstance().reference)
+        recyclerViewStories.adapter = storyAdapter
 
         loadStories()
         fetchPostsFromFirebase()
@@ -65,21 +91,58 @@ class feed : AppCompatActivity() {
     }
 
     private fun loadStories() {
-        val user = 1
-        val normal = 2
+        val storyRef = FirebaseDatabase.getInstance().getReference("stories")
+        val usersRef = FirebaseDatabase.getInstance().getReference("users")
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
 
-        val storyList = mutableListOf<story_model>()
-        storyList.add(story_model(user, R.drawable.affan_pfp))
-        storyList.add(story_model(normal, R.drawable.ham_pfp))
-        storyList.add(story_model(normal, R.drawable.adil_pfp))
-        storyList.add(story_model(normal, R.drawable.ham2_pfp))
-        storyList.add(story_model(normal, R.drawable.shayaan_pfp))
-        storyList.add(story_model(normal, R.drawable.faaira_pfp))
+        storyRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (!snapshot.exists()) {
+                    Log.d("FirebaseDebug", "❌ No stories found!")
+                    return
+                }
 
-        val rv = findViewById<RecyclerView>(R.id.recycler_view_stories)
-        rv.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        rv.adapter = story_adapter(storyList)
+                val storiesList = mutableListOf<story_model>()
+                var userStory: story_model? = null  // Store current user's story separately
+
+                for (userSnapshot in snapshot.children) {
+                    val userId = userSnapshot.key ?: continue
+
+                    if (userSnapshot.childrenCount > 0) {
+                        usersRef.child(userId).addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(userSnap: DataSnapshot) {
+                                val profileImage = userSnap.child("profileImageBase64").value?.toString() ?: ""
+                                val type = if (userId == currentUserId) 0 else 1  // 0 = USER_STORY, 1 = OTHER_STORY
+                                val story = story_model(type, userId, profileImage)
+
+                                if (userId == currentUserId) {
+                                    userStory = story  // Store user story separately
+                                } else {
+                                    storiesList.add(story)
+                                }
+
+                                // Only update RecyclerView after processing all users
+                                if ((storiesList.size + if (userStory != null) 1 else 0).toLong() == snapshot.childrenCount)
+                                {
+                                    userStory?.let { storiesList.add(0, it) }  // Always add user story at index 0
+                                    storyAdapter.updateList(storiesList)
+                                }
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {
+                                Log.e("FirebaseDebug", "❌ Error fetching user details: ${error.message}")
+                            }
+                        })
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("FirebaseDebug", "❌ Error loading stories: ${error.message}")
+            }
+        })
     }
+
 
     private fun fetchPostsFromFirebase() {
         database = FirebaseDatabase.getInstance().getReference("posts")

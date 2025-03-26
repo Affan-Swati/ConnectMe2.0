@@ -1,6 +1,7 @@
 package com.affan.i220916
 
 data class story_model(
-    var type: Int,
-    var image: Int
+    val type: Int,  // USER_STORY or OTHER_STORY
+    val userId: String,
+    val profileImageBase64: String
 )
