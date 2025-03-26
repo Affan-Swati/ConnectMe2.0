@@ -38,6 +38,14 @@ class StoryView : AppCompatActivity() {
 
         userId = intent.getStringExtra("userId") ?: FirebaseAuth.getInstance().currentUser?.uid
 
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+
+        // Hide and disable the delete button if the story belongs to another user
+        if (userId != currentUserId) {
+            deleteButton.visibility = TextView.GONE
+            deleteButton.isClickable = false
+        }
+
         if (userId != null) {
             fetchStory(userId!!)
         } else {
@@ -48,6 +56,7 @@ class StoryView : AppCompatActivity() {
         deleteButton.setOnClickListener { deleteStory() }
         closeButton.setOnClickListener { finish() }
     }
+
 
     private fun fetchStory(userId: String) {
         databaseRef = FirebaseDatabase.getInstance().getReference("stories").child(userId)
