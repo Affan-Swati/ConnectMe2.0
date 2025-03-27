@@ -8,7 +8,5 @@ data class User(
     val email: String = "",
     val userId: String = "",
     val profileImageBase64: String = "https://example.com/profile_icon.jpg", // Default profile image URL
-    val bio: String = "",
-    val followers: List<String> = emptyList(),
-    val following: List<String> = emptyList()
+    val bio: String = ""
 )

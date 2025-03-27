@@ -13,7 +13,12 @@
         android:layout_marginTop="5dp"
         android:layout_marginLeft="18dp"
         android:layout_height="35dp"
-        android:id="@+id/pfp">
+        android:id="@+id/pfp"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"
+        app:strokeColor="#56422A"
+        app:shapeAppearanceOverlay="@style/CircleShape">
     </com.google.android.material.imageview.ShapeableImageView>
 
     <TextView

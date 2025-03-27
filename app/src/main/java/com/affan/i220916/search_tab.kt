@@ -2,6 +2,7 @@ package com.affan.i220916
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
@@ -10,8 +11,17 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 
 class search_tab : AppCompatActivity() {
+
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: search_adapter
+    private val searchList = mutableListOf<search_model>()
+    private val database = FirebaseDatabase.getInstance()
+    private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -22,57 +32,84 @@ class search_tab : AppCompatActivity() {
             insets
         }
 
-        val homeBtn = findViewById<ImageView>(R.id.home_btn)
-        homeBtn.setOnClickListener {
-            finish()
-            val intent = Intent(this, feed::class.java)
-            startActivity(intent)
-        }
-
-        val profileBtn = findViewById<ImageView>(R.id.profile_btn)
-        profileBtn.setOnClickListener {
-            finish()
-            val intent = Intent(this, profile_tab::class.java)
-            startActivity(intent)
-        }
-
-        val postBtn = findViewById<ImageView>(R.id.post_btn)
-        postBtn.setOnClickListener {
-            val intent = Intent(this, new_post_gallery::class.java)
-            startActivity(intent)
-        }
-
-        val contactBtn = findViewById<ImageView>(R.id.contact_btn)
-        contactBtn.setOnClickListener {
-            val intent = Intent(this, contacts_tab::class.java)
-            startActivity(intent)
-        }
-
-        val search_list = mutableListOf<search_model>()
-
-        search_list.add(search_model("Affan Ahmad"))
-        search_list.add(search_model("Hamna Daud"))
-        search_list.add(search_model("Adil Nadeem"))
-        search_list.add(search_model("Shayaan"))
-        search_list.add(search_model("Faaira"))
-        search_list.add(search_model("Ham"))
-        search_list.add(search_model("Ali"))
-        search_list.add(search_model("Ahmad"))
-        search_list.add(search_model("Mustafa"))
-        search_list.add(search_model("Adeel"))
-        search_list.add(search_model("Haroon"))
-        search_list.add(search_model("Junaid"))
-
-        val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
+        recyclerView = findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = search_adapter(search_list)
+        adapter = search_adapter(searchList, currentUserId, database)
+        recyclerView.adapter = adapter
 
-        val search = findViewById<ImageView>(R.id.searchIcon)
-        search.setOnClickListener{
-            val intent = Intent(this, search_new_users::class.java)
-            val searchText = findViewById<EditText>(R.id.search).text.toString()
-            intent.putExtra("searchText", searchText)
-            startActivity(intent)
+        loadRecentSearches()
+
+        val searchIcon = findViewById<ImageView>(R.id.searchIcon)
+        val searchInput = findViewById<EditText>(R.id.search)
+
+        searchIcon.setOnClickListener {
+            val searchText = searchInput.text.toString().trim()
+            if (searchText.isNotEmpty()) {
+                saveSearchToFirebase(searchText) // Save new search
+                val intent = Intent(this, search_new_users::class.java)
+                intent.putExtra("searchText", searchText)
+                startActivity(intent)
+            }
+        }
+
+        setupBottomNav()
+    }
+
+    private fun loadRecentSearches() {
+        val recentSearchesRef = database.getReference("users").child(currentUserId).child("RecentSearches")
+        recentSearchesRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                searchList.clear()
+                for (searchSnapshot in snapshot.children) {
+                    val searchText = searchSnapshot.getValue(String::class.java)
+                    if (searchText != null) {
+                        searchList.add(search_model(searchText))
+                    }
+                }
+                adapter.notifyDataSetChanged()
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("Firebase", "Error loading recent searches: ${error.message}")
+            }
+        })
+    }
+
+    private fun saveSearchToFirebase(searchText: String) {
+        if (searchText.isBlank()) return // Don't save empty searches
+
+        val recentSearchesRef = database.getReference("users").child(currentUserId).child("RecentSearches")
+
+        recentSearchesRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val searches = snapshot.children.mapNotNull { it.getValue(String::class.java) }.toMutableList()
+
+                if (!searches.contains(searchText)) {
+                    searches.add(searchText)
+                    recentSearchesRef.setValue(searches)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("Firebase", "Error saving search: ${error.message}")
+            }
+        })
+    }
+
+    private fun setupBottomNav() {
+        findViewById<ImageView>(R.id.home_btn).setOnClickListener {
+            startActivity(Intent(this, feed::class.java))
+            finish()
+        }
+        findViewById<ImageView>(R.id.profile_btn).setOnClickListener {
+            startActivity(Intent(this, profile_tab::class.java))
+            finish()
+        }
+        findViewById<ImageView>(R.id.post_btn).setOnClickListener {
+            startActivity(Intent(this, new_post_gallery::class.java))
+        }
+        findViewById<ImageView>(R.id.contact_btn).setOnClickListener {
+            startActivity(Intent(this, contacts_tab::class.java))
         }
     }
 }
