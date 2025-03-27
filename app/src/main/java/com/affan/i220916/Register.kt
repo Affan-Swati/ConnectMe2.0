@@ -28,7 +28,7 @@ class Register : AppCompatActivity() {
         }
 
         auth = FirebaseAuth.getInstance()
-        database = FirebaseDatabase.getInstance().reference.child("users") // Firebase "users" node
+        database = FirebaseDatabase.getInstance().reference
 
         val name = findViewById<EditText>(R.id.name)
         val username = findViewById<EditText>(R.id.username)
@@ -60,10 +60,14 @@ class Register : AppCompatActivity() {
                             if (userId != null) {
                                 // Create a user object
                                 val user = User(name2, username2, phone2, email2, userId)
-
-                                // Store in Firebase
-                                database.child(userId).setValue(user)
+                                database.child("users").child(userId).setValue(user)
                                     .addOnSuccessListener {
+                                        val fol = hashMapOf("userId" to "")
+                                        val recentSearches = hashMapOf("userId" to "")
+                                        database.child("users").child(userId).child("Followers").setValue(fol)
+                                        database.child("users").child(userId).child("Following").setValue(fol)
+                                        database.child("users").child(userId).child("RecentSearches").setValue(recentSearches)
+
                                         Toast.makeText(this, "Account created successfully", Toast.LENGTH_SHORT).show()
                                         startActivity(Intent(this, login::class.java))
                                         finish()
