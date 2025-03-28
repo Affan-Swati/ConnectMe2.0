@@ -47,7 +47,6 @@ class feed : AppCompatActivity() {
             insets
         }
 
-
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance().reference
 
