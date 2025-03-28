@@ -47,8 +47,6 @@ class feed : AppCompatActivity() {
             insets
         }
 
-
-        NotificationManager.sendNotification("zsgPbyNPD7QHJTrfpWurcHpYSv02", "testing", "chal gaya naa!")
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance().reference
 

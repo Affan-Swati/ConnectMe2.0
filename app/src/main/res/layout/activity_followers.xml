@@ -48,7 +48,7 @@
         android:layout_height="2dp"
         android:background="#59442F"
         android:layout_marginTop="1dp"
-        android:layout_marginLeft="42dp"
+        android:layout_marginLeft="25dp"
         android:layout_marginBottom="20dp"
         />
 
