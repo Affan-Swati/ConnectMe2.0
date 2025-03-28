@@ -38,6 +38,10 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    packagingOptions{
+        exclude("META-INF/DEPENDENCIES")
+    }
 }
 
 dependencies {
@@ -54,6 +58,7 @@ dependencies {
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.firebase.database)
+    implementation(libs.firebase.messaging)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -63,5 +68,8 @@ dependencies {
     implementation (libs.androidx.camera.view)
     implementation (libs.glide)
     implementation (libs.androidx.exifinterface)
-
+    implementation (libs.retrofit.v2110)
+    implementation (libs.converter.gson)
+    implementation ("com.karumi:dexter:6.2.3")
+    implementation("com.google.auth:google-auth-library-oauth2-http:1.19.0")
 }
