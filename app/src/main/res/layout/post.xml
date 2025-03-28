@@ -31,7 +31,7 @@
                 android:adjustViewBounds="true"
                 app:strokeColor="#56422A"
                 app:strokeWidth="2dp"
-                android:src="@drawable/default_feed_pic"
+                android:src="@drawable/default_pic"
                 app:shapeAppearanceOverlay="@style/CircleShape"/>
         </FrameLayout>
 
@@ -62,7 +62,7 @@
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/default_feed_pic" />
+        android:src="@drawable/default_pic" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -73,15 +73,34 @@
         android:background="#FFFFFF">
 
         <ImageView
+            android:id="@+id/like_button"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/heart_icon" />
+            android:src="@drawable/heart_empty_icon" />
+
+        <TextView
+            android:id="@+id/like_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="1dp"
+            android:text="0"/>
 
         <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:id="@+id/comment_button"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginTop="1.5dp"
             android:layout_marginStart="16dp"
             android:src="@drawable/comment_icon" />
+
+        <TextView
+            android:id="@+id/comment_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="1dp"
+            android:text="0"/>
 
         <ImageView
             android:layout_width="35dp"

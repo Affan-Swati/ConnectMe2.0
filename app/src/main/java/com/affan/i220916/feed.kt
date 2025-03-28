@@ -219,6 +219,7 @@ class feed : AppCompatActivity() {
                         val caption =
                             postSnapshot.child("caption").getValue(String::class.java) ?: ""
                         val userId = postSnapshot.child("userId").getValue(String::class.java) ?: ""
+                        val postId = postSnapshot.child("postId").getValue(String::class.java) ?: ""
 
 
                         isFollowing(currentUserId, userId) { isFollowed ->
@@ -245,7 +246,8 @@ class feed : AppCompatActivity() {
                                                         userName,
                                                         userImageBitmap,
                                                         postImageBitmap,
-                                                        caption
+                                                        caption,
+                                                        postId
                                                     )
                                                 )
                                                 postAdapter.notifyDataSetChanged()
