@@ -72,8 +72,10 @@ class profile_tab : AppCompatActivity() {
                 val name = snapshot.child("name").getValue(String::class.java) ?: "Unknown"
                 val bio = snapshot.child("bio").getValue(String::class.java) ?: "No bio available"
                 val profilePicBase64 = snapshot.child("profileImageBase64").getValue(String::class.java)
-                val followers = snapshot.child("followers").childrenCount.toInt()
-                val following = snapshot.child("following").childrenCount.toInt()
+
+                // Check if "Followers" and "Following" nodes exist
+                val followers = if (snapshot.hasChild("Followers")) snapshot.child("Followers").childrenCount.toInt() else 0
+                val following = if (snapshot.hasChild("Following")) snapshot.child("Following").childrenCount.toInt() else 0
 
                 nameText.text = name
                 bioText.text = bio
