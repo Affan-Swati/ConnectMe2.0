@@ -31,6 +31,8 @@ firebaseMessaging = "24.1.1"
 retrofit = "2.9.0"
 retrofitVersion = "2.11.0"
 protoliteWellKnownTypes = "18.0.1"
+junitKtx = "1.2.1"
+espressoContrib = "3.6.1"
 
 [libraries]
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraCore" }
@@ -67,6 +69,8 @@ firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-v2110 = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofitVersion" }
 protolite-well-known-types = { group = "com.google.firebase", name = "protolite-well-known-types", version.ref = "protoliteWellKnownTypes" }
+androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
+androidx-espresso-contrib = { group = "androidx.test.espresso", name = "espresso-contrib", version.ref = "espressoContrib" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
