@@ -55,7 +55,7 @@ class login : AppCompatActivity() {
                         {
                             val userId = FirebaseAuth.getInstance().currentUser?.uid
                             val userStatusRef = userId?.let { it1 ->
-                                FirebaseDatabase.getInstance().getReference("Users").child(
+                                FirebaseDatabase.getInstance().getReference("users").child(
                                     it1
                                 ).child("isOnline")
                             }

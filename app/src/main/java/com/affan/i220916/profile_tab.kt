@@ -55,7 +55,7 @@ class profile_tab : AppCompatActivity() {
         logoutBtn.setOnClickListener {
             val userId = FirebaseAuth.getInstance().currentUser?.uid
             if (userId != null) {
-                val userStatusRef = FirebaseDatabase.getInstance().getReference("Users").child(userId).child("isOnline")
+                val userStatusRef = FirebaseDatabase.getInstance().getReference("users").child(userId).child("isOnline")
 
                 userStatusRef.setValue(false).addOnCompleteListener {
                     auth.signOut()

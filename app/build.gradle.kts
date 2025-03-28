@@ -60,6 +60,8 @@ dependencies {
     implementation(libs.firebase.database)
     implementation(libs.firebase.messaging)
     implementation(libs.protolite.well.known.types)
+    implementation(libs.androidx.junit.ktx)
+    implementation(libs.androidx.espresso.contrib)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -74,4 +76,9 @@ dependencies {
     implementation ("com.karumi:dexter:6.2.3")
     implementation("com.google.auth:google-auth-library-oauth2-http:1.19.0")
     implementation ("io.agora.rtc:full-sdk:4.2.1")
+
+    androidTestImplementation ("androidx.test.espresso:espresso-core:3.4.0")
+    androidTestImplementation ("androidx.test.ext:junit:1.1.3")
+    androidTestImplementation ("androidx.test.espresso:espresso-contrib:3.4.0")
+    androidTestImplementation ("androidx.test.espresso:espresso-intents:3.4.0")
 }
