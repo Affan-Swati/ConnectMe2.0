@@ -90,8 +90,16 @@ class search_new_users : AppCompatActivity() {
 
                             checkIfFollowing(userID) { isFollowing ->
                                 val bitmap = decodeBase64ToBitmap(pfpBase64)
-                                searchList.add(search_new_users_model(userID, userName, bitmap, isFollowing))
-                                adapter.notifyDataSetChanged()
+
+                                if (isFollowing) {
+                                    searchList.add(search_new_users_model(userID, userName, bitmap, true, false))
+                                    adapter.notifyDataSetChanged()
+                                } else {
+                                    checkIfRequested(userID) { isRequested ->
+                                        searchList.add(search_new_users_model(userID, userName, bitmap, false, isRequested))
+                                        adapter.notifyDataSetChanged()
+                                    }
+                                }
                             }
                         }
                     }
@@ -123,6 +131,22 @@ class search_new_users : AppCompatActivity() {
         followingRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 callback(snapshot.exists()) // True if following, false otherwise
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                callback(false)
+            }
+        })
+    }
+
+    private fun checkIfRequested(userID: String, callback: (Boolean) -> Unit) {
+        val requestedRef = database.getReference("users")
+            .child(userID)
+            .child("Requests")
+            .child(currentUserId)
+        requestedRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                callback(snapshot.exists())
             }
 
             override fun onCancelled(error: DatabaseError) {

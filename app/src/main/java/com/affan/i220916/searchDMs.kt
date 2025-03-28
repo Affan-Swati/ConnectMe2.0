@@ -57,5 +57,10 @@ class searchDMs : AppCompatActivity() {
             }
         }
 
+        val requests = findViewById<TextView>(R.id.Requests)
+        requests.setOnClickListener {
+            val intent = Intent(this, follow_request::class.java)
+            startActivity(intent)
+        }
     }
 }
