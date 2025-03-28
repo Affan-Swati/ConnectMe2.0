@@ -53,8 +53,15 @@ class login : AppCompatActivity() {
                     .addOnCompleteListener(this) { task ->
                         if (task.isSuccessful)
                         {
-                            //Toast.makeText(this, "User Signed In successfully", Toast.LENGTH_SHORT).show()
                             val userId = FirebaseAuth.getInstance().currentUser?.uid
+                            val userStatusRef = userId?.let { it1 ->
+                                FirebaseDatabase.getInstance().getReference("Users").child(
+                                    it1
+                                ).child("isOnline")
+                            }
+                            if (userStatusRef != null) {
+                                userStatusRef.setValue(true)
+                            }
                             userId?.let { saveFcmToken(it) }
                             finish()
                             var intent = Intent(this, feed::class.java)

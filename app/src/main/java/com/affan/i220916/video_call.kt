@@ -30,7 +30,7 @@ class video_call : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_call)
 
-        val receiver = intent.getStringExtra("reciever")
+        val receiver = intent.getStringExtra("userId")
 
         if(currentUserId < receiver.toString())
         {
@@ -60,6 +60,15 @@ class video_call : AppCompatActivity() {
                 receiverPfp = fetchedPfp
             }
         }
+
+        rtcEngine?.setClientRole(Constants.CLIENT_ROLE_BROADCASTER)
+        rtcEngine?.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION)
+        rtcEngine?.enableVideo()
+        val localView = RtcEngine.CreateRendererView(this)
+        localView.setZOrderMediaOverlay(true)
+        findViewById<FrameLayout>(R.id.local_video_view).addView(localView)
+        rtcEngine?.setupLocalVideo(VideoCanvas(localView, VideoCanvas.RENDER_MODE_HIDDEN, uid))
+
     }
 
     private fun fetchUserDetails(userId: String, name: TextView, callback: (String?) -> Unit) {
@@ -99,7 +108,12 @@ class video_call : AppCompatActivity() {
             val localView = RtcEngine.CreateRendererView(this)
             localView.setZOrderMediaOverlay(true)
             findViewById<FrameLayout>(R.id.local_video_view).addView(localView)
-            rtcEngine?.setupLocalVideo(VideoCanvas(localView, VideoCanvas.RENDER_MODE_HIDDEN, 0))
+            rtcEngine?.setupLocalVideo(VideoCanvas(localView, VideoCanvas.RENDER_MODE_HIDDEN, uid))
+
+            rtcEngine?.muteLocalAudioStream(false)
+            rtcEngine?.muteRemoteAudioStream(uid, false)
+            rtcEngine?.adjustPlaybackSignalVolume(100)
+
 
             joinChannel()
         } catch (e: Exception) {
@@ -135,4 +149,10 @@ class video_call : AppCompatActivity() {
     private fun requestPermissions() {
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA), 1)
     }
+
+    fun onUserJoined(uid: Int, elapsed: Int) {
+        Log.d("Agora", "User joined: $uid")
+        runOnUiThread { setupRemoteVideo(uid) }
+    }
+
 }
