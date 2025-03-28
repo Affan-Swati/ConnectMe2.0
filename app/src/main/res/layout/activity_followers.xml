@@ -20,7 +20,7 @@
         android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="OliviaD"
+        android:text="Loading..."
         android:textColor="#313133"
         android:layout_marginTop="30dp"
         android:textSize="25dp"
@@ -34,7 +34,7 @@
         android:layout_below="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="410 Followers"
+        android:text="Loading..."
         android:textStyle="bold"
         android:textColor="#59442F"
         android:textSize="18dp"
@@ -54,16 +54,15 @@
 
     <TextView
         android:id="@+id/following"
-        android:layout_below="@+id/name"
-        android:layout_toRightOf="@+id/followers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="387 Following"
-        android:textColor="#313133"
-        android:textSize="18dp"
-        android:layout_marginLeft="80dp"
+        android:layout_below="@+id/name"
+        android:layout_marginLeft="77dp"
         android:layout_marginTop="10dp"
-        />
+        android:layout_toRightOf="@+id/followers"
+        android:text="Loading..."
+        android:textColor="#313133"
+        android:textSize="18dp" />
 
     <EditText
         android:id="@+id/search"

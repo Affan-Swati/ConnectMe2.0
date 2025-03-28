@@ -53,18 +53,17 @@ class contacts_tab : AppCompatActivity() {
             startActivity(intent)
         }
 
-
         val follower_list = mutableListOf<follower_model>()
 
-        follower_list.add(follower_model(R.drawable.shayaan_pfp, "Shayaan"))
-        follower_list.add(follower_model(R.drawable.ham_pfp, "Hamna Daud"))
-        follower_list.add(follower_model(R.drawable.adil_pfp, "Adil Nadeem"))
-        follower_list.add(follower_model(R.drawable.faaira_pfp, "Faaira"))
-        follower_list.add(follower_model(R.drawable.eye_pfp, "Ahmad"))
-
-        val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = follower_adapter(follower_list)
+//        follower_list.add(follower_model(R.drawable.shayaan_pfp, "Shayaan"))
+//        follower_list.add(follower_model(R.drawable.ham_pfp, "Hamna Daud"))
+//        follower_list.add(follower_model(R.drawable.adil_pfp, "Adil Nadeem"))
+//        follower_list.add(follower_model(R.drawable.faaira_pfp, "Faaira"))
+//        follower_list.add(follower_model(R.drawable.eye_pfp, "Ahmad"))
+//
+//        val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
+//        recyclerView.layoutManager = LinearLayoutManager(this)
+//        recyclerView.adapter = follower_adapter(follower_list)
 
         val contact_list = mutableListOf<contacts_model>()
 

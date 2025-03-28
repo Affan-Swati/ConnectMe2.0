@@ -2,16 +2,29 @@ package com.affan.i220916
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class following : AppCompatActivity() {
+    private lateinit var adapter: follower_adapter
+    private val searchList = mutableListOf<follower_model>()
+    private val displayedUserIds = mutableSetOf<String>()
+    private val database = FirebaseDatabase.getInstance()
+    private val auth = FirebaseAuth.getInstance()
+    private val currentUserId = auth.currentUser?.uid ?: ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -34,35 +47,96 @@ class following : AppCompatActivity() {
             startActivity(intent)
         }
 
-
-
         val following_list = mutableListOf<follower_model>()
-
-        following_list.add(follower_model(R.drawable.faaira_pfp, "Faaira"))
-        following_list.add(follower_model(R.drawable.ham2_pfp, "Ham"))
-        following_list.add(follower_model(R.drawable.ham_pfp, "Hamna Daud"))
-        following_list.add(follower_model(R.drawable.adil_pfp, "Adil Nadeem"))
-        following_list.add(follower_model(R.drawable.shayaan_pfp, "Shayaan"))
-        following_list.add(follower_model(R.drawable.faaira_pfp, "Faaira"))
-        following_list.add(follower_model(R.drawable.affan_pfp, "Affan Ahmad"))
-        following_list.add(follower_model(R.drawable.ham2_pfp, "Ham"))
-        following_list.add(follower_model(R.drawable.shayaan_pfp, "Shayaan"))
-        following_list.add(follower_model(R.drawable.ham_pfp, "Hamna Daud"))
-        following_list.add(follower_model(R.drawable.adil_pfp, "Adil Nadeem"))
-        following_list.add(follower_model(R.drawable.faaira_pfp, "Faaira"))
-        following_list.add(follower_model(R.drawable.ham2_pfp, "Ham"))
-        following_list.add(follower_model(R.drawable.ham_pfp, "Hamna Daud"))
-        following_list.add(follower_model(R.drawable.adil_pfp, "Adil Nadeem"))
-        following_list.add(follower_model(R.drawable.shayaan_pfp, "Shayaan"))
-        following_list.add(follower_model(R.drawable.faaira_pfp, "Faaira"))
-        following_list.add(follower_model(R.drawable.affan_pfp, "Affan Ahmad"))
-        following_list.add(follower_model(R.drawable.ham2_pfp, "Ham"))
-        following_list.add(follower_model(R.drawable.shayaan_pfp, "Shayaan"))
-        following_list.add(follower_model(R.drawable.ham_pfp, "Hamna Daud"))
-        following_list.add(follower_model(R.drawable.adil_pfp, "Adil Nadeem"))
+        val currentUser = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
         val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = follower_adapter(following_list)
+        adapter = follower_adapter(searchList)
+        recyclerView.adapter = adapter
+
+        searchUsersInFirebase()
+
+        val name = findViewById<TextView>(R.id.name)
+        val nameRef = database.getReference("users").child(currentUserId).child("name")
+
+        nameRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val userName = snapshot.getValue(String::class.java) // Get the actual name
+                name.text = userName ?: "Unknown" // Set the TextView
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("Firebase", "Error fetching name: ${error.message}")
+            }
+        })
+
+
+        loadUserProfile(findViewById(R.id.followers), findViewById(R.id.following))
     }
+
+    private fun searchUsersInFirebase() {
+        database.getReference("users").child(currentUserId).child("Following")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    searchList.clear()
+                    displayedUserIds.clear()
+
+                    for (userSnapshot in snapshot.children) {
+                        val userId = userSnapshot.key ?: continue // The key is the follower's userId
+
+                        if (!displayedUserIds.contains(userId)) {
+                            displayedUserIds.add(userId)
+
+                            // Fetch follower details
+                            database.getReference("users").child(userId)
+                                .addListenerForSingleValueEvent(object : ValueEventListener {
+                                    override fun onDataChange(userSnapshot: DataSnapshot) {
+                                        val userName = userSnapshot.child("username").getValue(String::class.java) ?: return
+                                        val pfpBase64 = userSnapshot.child("profileImageBase64").getValue(String::class.java)
+                                        val bitmap = decodeBase64ToBitmap(pfpBase64)
+
+                                        searchList.add(follower_model(bitmap, userName, userId))
+                                        adapter.notifyDataSetChanged()
+                                    }
+
+                                    override fun onCancelled(error: DatabaseError) {
+                                        Log.e("Firebase", "Error fetching user details: ${error.message}")
+                                    }
+                                })
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("Firebase", "Error fetching followers: ${error.message}")
+                }
+            })
+    }
+
+    private fun loadUserProfile(followerCountText: TextView, followingCountText: TextView)
+    {
+        var db = FirebaseDatabase.getInstance().reference
+        val currentUserId = auth.currentUser?.uid ?: return
+        val userRef = db.child("users").child(currentUserId)
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val name = snapshot.child("name").getValue(String::class.java) ?: "Unknown"
+                val bio = snapshot.child("bio").getValue(String::class.java) ?: "No bio available"
+                val profilePicBase64 = snapshot.child("profileImageBase64").getValue(String::class.java)
+
+                // Check if "Followers" and "Following" nodes exist
+                val followers = if (snapshot.hasChild("Followers")) snapshot.child("Followers").childrenCount.toInt() else 0
+                val following = if (snapshot.hasChild("Following")) snapshot.child("Following").childrenCount.toInt() else 0
+
+                followerCountText.text = followers.toString() + " Followers"
+                followingCountText.text = following.toString() + " Following"
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@following, "Failed to load profile: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
 }
