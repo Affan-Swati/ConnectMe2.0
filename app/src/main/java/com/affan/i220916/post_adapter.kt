@@ -23,7 +23,7 @@ class post_adapter(private val postList: List<post_model>) : RecyclerView.Adapte
         if (post.userImage != null) {
             holder.userImage.setImageBitmap(post.userImage)
         } else {
-            holder.userImage.setImageResource(R.drawable.affan_pfp) // Default profile image
+            holder.userImage.setImageResource(R.drawable.default_pic) // Default profile image
         }
 
         // Load post image if available, else set default placeholder
