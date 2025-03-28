@@ -60,11 +60,10 @@ class new_post_share : AppCompatActivity() {
 
                 // Create a Post object instead of using a map
                 val post = Post(
+                    postId = postRef.key ?: "",
                     imageBase64 = encodeImageToBase64() ?: "",
                     caption = caption,
-                    userId = currentUserId,
-                    likes = 0,
-                    comments = emptyList()
+                    userId = currentUserId
                 )
 
                 postRef.setValue(post).addOnSuccessListener {

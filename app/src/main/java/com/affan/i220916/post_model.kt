@@ -6,5 +6,8 @@ data class post_model(
     val userName: String,
     val userImage: Bitmap?,  // Decoded profile image
     val postImage: Bitmap?,  // Decoded post image
-    val caption: String
+    val caption: String,
+    val postId: String,
+    val userId: String
 )
+

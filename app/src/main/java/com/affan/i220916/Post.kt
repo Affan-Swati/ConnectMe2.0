@@ -8,9 +8,8 @@ data class Post(
     val imageBase64: String = "",
     val caption: String = "",
     val userId: String = "",
-    val likes: Int = 0,
-    val comments: List<String> = emptyList(),
-    val timestamp: String = getCurrentTimestamp()
+    val timestamp: String = getCurrentTimestamp(),
+    val postId: String = ""
 )
 
 fun getCurrentTimestamp(): String {
