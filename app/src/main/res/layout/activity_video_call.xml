@@ -8,8 +8,22 @@
     android:background="#DEDEDE"
     tools:context=".audio_call">
 
+    <FrameLayout
+        android:id="@+id/local_video_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"/>
+
+    <FrameLayout
+        android:layout_width="125dp"
+        android:layout_height="160dp"
+        android:layout_marginTop="470dp"
+        android:layout_marginLeft="245dp"
+        android:id="@+id/remote_video_view"
+        android:background="@drawable/white_rounded_rect"/>
 
     <TextView
+        android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -18,22 +32,6 @@
         android:text="Affan Ahmad"
         android:textSize="30dp"
         android:layout_marginTop="30dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:textColor="#000000"
-        android:text="10:32"
-        android:textSize="25dp"
-        android:layout_marginTop="80dp"/>
-
-    <ImageView
-        android:layout_width="125dp"
-        android:layout_height="160dp"
-        android:layout_marginTop="470dp"
-        android:layout_marginLeft="245dp"
-        android:background="@drawable/white_rounded_rect"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
