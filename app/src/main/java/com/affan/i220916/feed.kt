@@ -48,7 +48,6 @@ class feed : AppCompatActivity() {
         }
 
 
-        NotificationManager.sendNotification("zsgPbyNPD7QHJTrfpWurcHpYSv02", "testing", "chal gaya naa!")
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance().reference
 
@@ -112,7 +111,6 @@ class feed : AppCompatActivity() {
         // Fetch all users first to count them
         usersRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(usersSnapshot: DataSnapshot) {
-                val totalUsers = usersSnapshot.childrenCount.toInt()
                 var processedUsers = 0
 
                 // Fetch current user details first
@@ -129,7 +127,7 @@ class feed : AppCompatActivity() {
                                 profileImageBase64 = profileImage
                             )
                             Log.e("FirebaseDebug", " Current Added to list")
-                            storiesList.add(userStory!!)  // Always keep current user first
+                            storiesList.add(userStory!!)
                             processedUsers++
 
                             // Check if all users are processed
@@ -152,34 +150,40 @@ class feed : AppCompatActivity() {
                                 val userId = userSnapshot.key ?: continue
                                 if (userId == currentUserId) continue  // Skip if it's the current user
 
-                                usersRef.child(userId)
-                                    .addListenerForSingleValueEvent(object : ValueEventListener {
-                                        override fun onDataChange(userSnap: DataSnapshot) {
-                                            val profileImage =
-                                                userSnap.child("profileImageBase64").value?.toString()
-                                                    ?: ""
-                                            val story = story_model(
-                                                type = story_adapter.OTHER_STORY, // 1 = OTHER_STORY
-                                                userId = userId,
-                                                profileImageBase64 = profileImage
-                                            )
-                                            Log.e("FirebaseDebug", " Other Added to list")
-                                            storiesList.add(story)
-                                            processedUsers++
+                                isFollowing(currentUserId, userId) { isFollowed ->
+                                    if (isFollowed) {
 
-                                            // Check if all users are processed
+                                        usersRef.child(userId)
+                                            .addListenerForSingleValueEvent(object :
+                                                ValueEventListener {
+                                                override fun onDataChange(userSnap: DataSnapshot) {
+                                                    val profileImage =
+                                                        userSnap.child("profileImageBase64").value?.toString()
+                                                            ?: ""
+                                                    val story = story_model(
+                                                        type = story_adapter.OTHER_STORY, // 1 = OTHER_STORY
+                                                        userId = userId,
+                                                        profileImageBase64 = profileImage
+                                                    )
+                                                    Log.e("FirebaseDebug", " Other Added to list")
+                                                    storiesList.add(story)
+                                                    processedUsers++
 
-                                            storyAdapter.updateList(storiesList)
+                                                    // Check if all users are processed
 
-                                        }
+                                                    storyAdapter.updateList(storiesList)
 
-                                        override fun onCancelled(error: DatabaseError) {
-                                            Log.e(
-                                                "FirebaseDebug",
-                                                "❌ Error fetching user details: ${error.message}"
-                                            )
-                                        }
-                                    })
+                                                }
+
+                                                override fun onCancelled(error: DatabaseError) {
+                                                    Log.e(
+                                                        "FirebaseDebug",
+                                                        "❌ Error fetching user details: ${error.message}"
+                                                    )
+                                                }
+                                            })
+                                    }
+                                }
                             }
                         } else {
                             // No other stories exist, just update with current user's icon
@@ -201,7 +205,7 @@ class feed : AppCompatActivity() {
 
     private fun fetchPostsFromFirebase() {
         database = FirebaseDatabase.getInstance().getReference("posts")
-
+        val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         database.orderByChild("timestamp")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -215,40 +219,49 @@ class feed : AppCompatActivity() {
                             postSnapshot.child("caption").getValue(String::class.java) ?: ""
                         val userId = postSnapshot.child("userId").getValue(String::class.java) ?: ""
 
-                        usersRef.child(userId)
-                            .addListenerForSingleValueEvent(object : ValueEventListener {
-                                override fun onDataChange(userSnapshot: DataSnapshot) {
-                                    val userName =
-                                        userSnapshot.child("name").getValue(String::class.java)
-                                            ?: "Unknown User"
-                                    val userImageBase64 = userSnapshot.child("profileImageBase64")
-                                        .getValue(String::class.java) ?: ""
 
-                                    val postImageBitmap = decodeBase64ToBitmap(imageBase64)
-                                    val userImageBitmap = decodeBase64ToBitmap(userImageBase64)
+                        isFollowing(currentUserId, userId) { isFollowed ->
+                            if (isFollowed || userId == currentUserId) {
+                                usersRef.child(userId)
+                                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                                        override fun onDataChange(userSnapshot: DataSnapshot) {
+                                            val userName =
+                                                userSnapshot.child("name")
+                                                    .getValue(String::class.java)
+                                                    ?: "Unknown User"
+                                            val userImageBase64 =
+                                                userSnapshot.child("profileImageBase64")
+                                                    .getValue(String::class.java) ?: ""
 
-                                    if (postImageBitmap != null) {
-                                        postList.add(
-                                            0,
-                                            post_model(
-                                                userName,
-                                                userImageBitmap,
-                                                postImageBitmap,
-                                                caption
-                                            )
-                                        )
-                                        postAdapter.notifyDataSetChanged()
-                                    }
-                                }
+                                            val postImageBitmap = decodeBase64ToBitmap(imageBase64)
+                                            val userImageBitmap =
+                                                decodeBase64ToBitmap(userImageBase64)
 
-                                override fun onCancelled(error: DatabaseError) {
-                                    Toast.makeText(
-                                        this@feed,
-                                        "Failed to load user data",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            })
+                                            if (postImageBitmap != null) {
+                                                postList.add(
+                                                    0,
+                                                    post_model(
+                                                        userName,
+                                                        userImageBitmap,
+                                                        postImageBitmap,
+                                                        caption
+                                                    )
+                                                )
+                                                postAdapter.notifyDataSetChanged()
+                                            }
+                                        }
+
+                                        override fun onCancelled(error: DatabaseError) {
+                                            Toast.makeText(
+                                                this@feed,
+                                                "Failed to load user data",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    })
+                            }
+                        }
+
                     }
                 }
 
@@ -317,5 +330,26 @@ class feed : AppCompatActivity() {
             null
         }
     }
+
+    private fun isFollowing(currentUserId: String, userId: String, callback: (Boolean) -> Unit) {
+        val followingRef = FirebaseDatabase.getInstance().getReference("users")
+            .child(currentUserId)
+            .child("Following")
+            .child(userId)
+            followingRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    callback(snapshot.exists()) // True if following, false otherwise
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    callback(false)
+                }
+            })
+    }
+
+
+
+
+
 
 }
