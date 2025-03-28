@@ -6,5 +6,6 @@ data class search_new_users_model(
     val userID: String,
     val userName: String,
     val pfp: Bitmap?,
-    var isFollowing: Boolean = false
+    var isFollowing: Boolean = false,
+    var isRequested: Boolean = false
 )

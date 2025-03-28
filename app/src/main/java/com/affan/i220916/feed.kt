@@ -317,4 +317,5 @@ class feed : AppCompatActivity() {
             null
         }
     }
+
 }
