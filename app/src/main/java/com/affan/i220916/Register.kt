@@ -60,6 +60,7 @@ class Register : AppCompatActivity() {
                             if (userId != null) {
                                 // Create a user object
                                 val user = User(name2, username2, phone2, email2, userId)
+                                user.loadProfileImage(this)
                                 database.child("users").child(userId).setValue(user)
                                     .addOnSuccessListener {
                                         val fol = hashMapOf("userId" to "")

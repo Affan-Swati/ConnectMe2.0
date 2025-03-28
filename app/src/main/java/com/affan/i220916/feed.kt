@@ -1,10 +1,8 @@
 package com.affan.i220916
 
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.os.Build
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
@@ -12,19 +10,12 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.affan.i220916.api.NotificationAPI
-import com.affan.i220916.model.Notification
-import com.affan.i220916.model.NotificationData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class feed : AppCompatActivity() {
     private lateinit var database: DatabaseReference
@@ -48,7 +39,6 @@ class feed : AppCompatActivity() {
         }
 
 
-        NotificationManager.sendNotification("zsgPbyNPD7QHJTrfpWurcHpYSv02", "testing", "chal gaya naa!")
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance().reference
 
@@ -317,4 +307,5 @@ class feed : AppCompatActivity() {
             null
         }
     }
+
 }

@@ -49,7 +49,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:layout_below="@+id/H1"
-        android:src="@drawable/affan_pfp"
+        android:src="@drawable/default_pic"
         app:shapeAppearanceOverlay="@style/CircleShape"/>
 
 
@@ -58,7 +58,7 @@
         android:layout_below="@+id/pfp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Affan Ahmad"
+        android:text="Loading..."
         android:textColor="#313133"
         android:textSize="24dp"
         android:layout_centerHorizontal="true"
@@ -69,7 +69,7 @@
         android:layout_below="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="two bananas for a pound, three bananas \nfor a euro"
+        android:text="Loading..."
         android:textColor="#313133"
         android:textSize="16dp"
         android:paddingLeft="40dp"
@@ -93,7 +93,7 @@
                 android:id="@+id/post_count"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="7"
+                android:text="0"
                 android:textColor="#000000"
                 android:textSize="20dp"
                 android:textStyle="bold"/>
@@ -118,7 +118,7 @@
                 android:id="@+id/follower_count"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="410"
+                android:text="0"
                 android:textColor="#000000"
                 android:textSize="20dp"
                 android:textStyle="bold"/>
@@ -143,7 +143,7 @@
                 android:id="@+id/following_count"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="387"
+                android:text="0"
                 android:textColor="#000000"
                 android:textSize="20dp"
                 android:textStyle="bold"/>
