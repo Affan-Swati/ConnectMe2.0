@@ -43,7 +43,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             .setContentTitle(message.data["title"])
             .setContentText(message.data["body"])
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setBadgeIconType(R.drawable.ic_launcher_foreground)
+            .setBadgeIconType(R.drawable.icon_connectme)
             .setAutoCancel(true)
             .setOngoing(false)
             .setLights(

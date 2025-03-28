@@ -1,13 +1,14 @@
 {
   "project_info": {
-    "project_number": "619863352858",
-    "project_id": "i220916",
-    "storage_bucket": "i220916.firebasestorage.app"
+    "project_number": "321809209571",
+    "firebase_url": "https://i220799-default-rtdb.firebaseio.com",
+    "project_id": "i220799",
+    "storage_bucket": "i220799.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:619863352858:android:3376534cc2894e632e53a3",
+        "mobilesdk_app_id": "1:321809209571:android:82497b75c5c32fec704dd6",
         "android_client_info": {
           "package_name": "com.affan.i220916"
         }
@@ -15,7 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBbevtvEIadn7a_usZRpO9BWTgnqEABpLU"
+          "current_key": "AIzaSyB2LHcVUhaescMj1CLRGUiguxLeMxMMv_g"
         }
       ],
       "services": {

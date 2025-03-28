@@ -2,10 +2,13 @@ package com.affan.i220916
 
 import android.content.Context
 import android.content.Intent
+import android.database.ContentObserver
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.MediaStore
+import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.widget.EditText
@@ -26,11 +29,9 @@ import com.google.firebase.database.ValueEventListener
 
 class dm : AppCompatActivity() {
 
-    private var clickCount = 0
-    private val handler = Handler(Looper.getMainLooper())
-    private val runnable = Runnable { clickCount = 0 }
-
-    private val database = FirebaseDatabase.getInstance()
+    private lateinit var screenshotObserver : ContentObserver
+    private var recv_id = ""
+    private var curr_userName = ""
     private val auth = FirebaseAuth.getInstance()
     private val currentUserId = auth.currentUser?.uid ?: ""
 
@@ -44,6 +45,22 @@ class dm : AppCompatActivity() {
             intent.putExtra("userId", userId)
             startActivity(intent)
         }
+        val handler = Handler(Looper.getMainLooper())
+
+        screenshotObserver = object : ContentObserver(handler) {
+            override fun onChange(selfChange: Boolean) {
+                super.onChange(selfChange)
+                checkForScreenshot()
+            }
+        }
+
+        contentResolver.registerContentObserver(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            true,
+            screenshotObserver
+        )
+
+        curr_userName = FirebaseDatabase.getInstance().getReference("users").child(userId.toString()).child("name").get().toString()
 
         val backButton = findViewById<ImageView>(R.id.back_button)
         backButton.setOnClickListener {
@@ -77,6 +94,7 @@ class dm : AppCompatActivity() {
         if (userId != null) {
             fetchUserDetails(userId, name, pfp) { fetchedPfp ->
                 receiverPfp = fetchedPfp
+                recv_id = userId
                 val adapter = message_adapter(msgList, receiverPfp)
                 rv.layoutManager = LinearLayoutManager(this)
                 rv.adapter = adapter
@@ -127,6 +145,7 @@ class dm : AppCompatActivity() {
 
     fun sendMessage(senderId: String, receiverId: String, messageText: String)
     {
+        NotificationManager.sendNotification(receiverId, "Check DMs", "You have a new message!")
         var chatId = ""
         if(senderId <= receiverId)
         {
@@ -163,5 +182,37 @@ class dm : AppCompatActivity() {
                 callback(null)
             }
         }
+    }
+
+    private fun checkForScreenshot() {
+        val projection = arrayOf(
+            MediaStore.Images.Media.DATE_ADDED,
+            MediaStore.Images.Media.DATA
+        )
+
+        val cursor = contentResolver.query(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            projection,
+            null,
+            null,
+            MediaStore.Images.Media.DATE_ADDED + " DESC" // Get the latest image first
+        )
+
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val path = it.getString(it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA))
+                if (path.lowercase().contains("screenshot")) {
+                    Log.d("ScreenshotObserver", "Screenshot detected: $path")
+                    runOnUiThread {
+                        NotificationManager.sendNotification(recv_id , "ALERT!" , "$curr_userName took a screenshot of the chat!")
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        contentResolver.unregisterContentObserver(screenshotObserver)
     }
 }
