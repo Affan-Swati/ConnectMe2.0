@@ -22,7 +22,7 @@ class follower_adapter(private val items: List<follower_model>) : RecyclerView.A
 
     override fun onBindViewHolder(holder: followerViewHolder, position: Int) {
         val item = items[position]
-        holder.profileImage.setImageResource(item.profileImageResId)
+        holder.profileImage.setImageBitmap(item.profileImageResId)
         holder.userName.text = item.userName
     }
 
