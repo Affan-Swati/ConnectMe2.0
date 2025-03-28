@@ -45,6 +45,7 @@
         android:layout_below="@+id/msg"
         android:layout_marginTop="3dp"
         android:text="10:30"
+        android:id="@+id/msg_time"
         android:alpha="0.5"/>
 
 </RelativeLayout>

@@ -26,7 +26,7 @@
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Affan"
+            android:text="Loading.."
             android:textColor="#FFFFFF"
             android:layout_marginTop="25dp"
             android:textSize="25dp"
@@ -47,7 +47,7 @@
 
         <FrameLayout
             android:id="@+id/pfp_frame"
-            android:layout_centerHorizontal="true"
+            android:layout_centerInParent="true"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_gravity="center"
@@ -71,7 +71,6 @@
             android:layout_centerHorizontal="true"
             android:text="View Profile"
             android:textSize="15dp"
-            android:layout_marginTop="15dp"
             android:paddingTop="7dp"
             android:paddingBottom="7dp"
             android:paddingLeft="25dp"
@@ -129,18 +128,16 @@
 
         <EditText
             android:id="@+id/type_msg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
             android:background="@drawable/typing_bg_dark"
-            android:paddingLeft = "30dp"
-            android:paddingRight = "270dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="20dp"
-            android:paddingBottom="20dp"
-            android:paddingTop = "20dp"
+            android:layout_margin="10dp"
             android:textColorHint= "#C2BAB3"
-
-            android:hint="Typing...."/>
+            android:textColor="#C2BAB3"
+            android:gravity="center_vertical"
+            android:paddingLeft="25dp"
+            android:layout_alignParentBottom="true"
+            android:hint="Enter Message...."/>
 
         <ImageView
             android:id="@+id/send_button"
