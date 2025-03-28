@@ -47,6 +47,8 @@ class feed : AppCompatActivity() {
             insets
         }
 
+
+        NotificationManager.sendNotification("zsgPbyNPD7QHJTrfpWurcHpYSv02", "testing", "chal gaya naa!")
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance().reference
 
@@ -217,6 +219,7 @@ class feed : AppCompatActivity() {
                         val caption =
                             postSnapshot.child("caption").getValue(String::class.java) ?: ""
                         val userId = postSnapshot.child("userId").getValue(String::class.java) ?: ""
+                        val postId = postSnapshot.child("postId").getValue(String::class.java) ?: ""
 
 
                         isFollowing(currentUserId, userId) { isFollowed ->
@@ -243,7 +246,8 @@ class feed : AppCompatActivity() {
                                                         userName,
                                                         userImageBitmap,
                                                         postImageBitmap,
-                                                        caption
+                                                        caption,
+                                                        postId
                                                     )
                                                 )
                                                 postAdapter.notifyDataSetChanged()

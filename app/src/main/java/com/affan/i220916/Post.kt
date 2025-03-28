@@ -8,8 +8,16 @@ data class Post(
     val imageBase64: String = "",
     val caption: String = "",
     val userId: String = "",
-    val likes: Int = 0,
-    val comments: List<String> = emptyList(),
+    val likes: MutableList<String> = mutableListOf(), // List of user IDs who liked
+    val comments: MutableList<Comment> = mutableListOf(), // List of comments
+    val timestamp: String = getCurrentTimestamp(),
+    val postId: String = ""
+)
+
+data class Comment(
+    val userId: String = "",
+    val username: String = "",
+    val text: String = "",
     val timestamp: String = getCurrentTimestamp()
 )
 
