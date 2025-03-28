@@ -73,4 +73,5 @@ dependencies {
     implementation (libs.converter.gson)
     implementation ("com.karumi:dexter:6.2.3")
     implementation("com.google.auth:google-auth-library-oauth2-http:1.19.0")
+    implementation ("io.agora.rtc:full-sdk:4.2.1")
 }

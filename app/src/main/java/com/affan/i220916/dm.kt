@@ -56,6 +56,7 @@ class dm : AppCompatActivity() {
         call_btn.setOnClickListener {
             finish()
             val intent = Intent(this, audio_call::class.java)
+            intent.putExtra("reciever", userId)
             startActivity(intent)
         }
 
