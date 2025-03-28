@@ -63,9 +63,7 @@ class new_post_share : AppCompatActivity() {
                     postId = postRef.key ?: "",
                     imageBase64 = encodeImageToBase64() ?: "",
                     caption = caption,
-                    userId = currentUserId,
-                    likes = mutableListOf(),
-                    comments = mutableListOf()
+                    userId = currentUserId
                 )
 
                 postRef.setValue(post).addOnSuccessListener {

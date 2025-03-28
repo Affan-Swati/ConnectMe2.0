@@ -247,7 +247,8 @@ class feed : AppCompatActivity() {
                                                         userImageBitmap,
                                                         postImageBitmap,
                                                         caption,
-                                                        postId
+                                                        postId,
+                                                        userId
                                                     )
                                                 )
                                                 postAdapter.notifyDataSetChanged()
