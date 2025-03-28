@@ -27,6 +27,7 @@ class edit_profile : AppCompatActivity() {
     private lateinit var phoneEdit: EditText
     private lateinit var bioEdit: EditText
     private lateinit var doneBtn: TextView
+    private lateinit var nameText: TextView
 
     private var selectedImageUri: Uri? = null
 
@@ -50,6 +51,7 @@ class edit_profile : AppCompatActivity() {
         phoneEdit = findViewById(R.id.contact_input)
         bioEdit = findViewById(R.id.bio_input)
         doneBtn = findViewById(R.id.done_btn)
+        nameText= findViewById(R.id.name_text)
 
         loadUserProfile()
 
@@ -80,6 +82,7 @@ class edit_profile : AppCompatActivity() {
                 usernameEdit.setText(username)
                 phoneEdit.setText(phone)
                 bioEdit.setText(bio)
+                nameText.setText(name)
 
                 if (!profilePicBase64.isNullOrEmpty()) {
                     val imageBytes = Base64.decode(profilePicBase64, Base64.DEFAULT)
