@@ -16,6 +16,7 @@
         android:textStyle="bold"
         android:text="Affan Ahmad"
         android:textSize="30dp"
+        android:id="@+id/name"
         android:layout_marginTop="100dp"/>
 
     <com.google.android.material.imageview.ShapeableImageView
@@ -26,15 +27,6 @@
         android:src="@drawable/affan_pfp"
         app:shapeAppearanceOverlay="@style/CircleShape"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:textColor="#000000"
-        android:text="10:32"
-        android:textSize="25dp"
-        android:layout_marginTop="500dp"/>
-    
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
@@ -58,7 +50,7 @@
             android:background="@drawable/circle_icon_bg"
             android:padding="5dp"
             android:src="@drawable/three_dots_horizontal" />
-s
+        s
         <ImageView
             android:layout_width="45dp"
             android:layout_height="45dp"
