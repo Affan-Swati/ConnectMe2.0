@@ -31,14 +31,17 @@ class dm : AppCompatActivity() {
 
     private lateinit var screenshotObserver : ContentObserver
     private var recv_id = ""
-    private var curr_userName = ""
+    private var curr_userName = "Unknown" ?: null
     private val auth = FirebaseAuth.getInstance()
     private val currentUserId = auth.currentUser?.uid ?: ""
+    private var lastScreenshotPath: String? = null
+    private var lastScreenshotTime: Long = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dm)
-        var userId = intent.getStringExtra("userId")
+        val userId = intent.getStringExtra("userId")
 
         findViewById<TextView>(R.id.view_profile).setOnClickListener{
             val intent = Intent(this@dm, vanish_mode::class.java)
@@ -60,7 +63,12 @@ class dm : AppCompatActivity() {
             screenshotObserver
         )
 
-        curr_userName = FirebaseDatabase.getInstance().getReference("users").child(userId.toString()).child("name").get().toString()
+        val dbRef = FirebaseDatabase.getInstance().getReference("users")
+        dbRef.child(currentUserId).child("name").get()
+            .addOnSuccessListener { snapshot ->
+                curr_userName = snapshot.getValue(String::class.java)
+            }
+
 
         val backButton = findViewById<ImageView>(R.id.back_button)
         backButton.setOnClickListener {
@@ -145,7 +153,7 @@ class dm : AppCompatActivity() {
 
     fun sendMessage(senderId: String, receiverId: String, messageText: String)
     {
-        NotificationManager.sendNotification(receiverId, "Check DMs", "You have a new message!")
+        NotificationManager.sendNotification(receiverId, "New Message", "$curr_userName sent you a message!")
         var chatId = ""
         if(senderId <= receiverId)
         {
@@ -195,14 +203,16 @@ class dm : AppCompatActivity() {
             projection,
             null,
             null,
-            MediaStore.Images.Media.DATE_ADDED + " DESC" // Get the latest image first
+            MediaStore.Images.Media.DATE_ADDED + " DESC"
         )
 
         cursor?.use {
             if (it.moveToFirst()) {
                 val path = it.getString(it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA))
-                if (path.lowercase().contains("screenshot")) {
-                    Log.d("ScreenshotObserver", "Screenshot detected: $path")
+                val now = System.currentTimeMillis()
+                if (path.lowercase().contains("screenshot") && path != lastScreenshotPath  && now - lastScreenshotTime > 5000) {
+                    lastScreenshotPath = path
+                    lastScreenshotTime = now
                     runOnUiThread {
                         NotificationManager.sendNotification(recv_id , "ALERT!" , "$curr_userName took a screenshot of the chat!")
                     }
@@ -210,6 +220,7 @@ class dm : AppCompatActivity() {
             }
         }
     }
+
 
     override fun onDestroy() {
         super.onDestroy()

@@ -59,7 +59,7 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.firebase.database)
     implementation(libs.firebase.messaging)
-    implementation(libs.protolite.well.known.types)
+    //implementation(libs.protolite.well.known.types)
     implementation(libs.androidx.junit.ktx)
     implementation(libs.androidx.espresso.contrib)
     testImplementation(libs.junit)

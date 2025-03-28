@@ -11,7 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.type.Date
+//import com.google.type.Date
 
 class message_adapter(private val messageList: List<Message>, private val receiverPfp: String?) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
