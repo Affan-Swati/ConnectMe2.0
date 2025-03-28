@@ -1,6 +1,9 @@
 package com.affan.i220916
 
+import android.graphics.Bitmap
+
 data class searchDMs_model(
-    val profileImageResId: Int,
-    val userName: String
+    val userId: String,
+    val userName: String,
+    val pfp: Bitmap?
 )

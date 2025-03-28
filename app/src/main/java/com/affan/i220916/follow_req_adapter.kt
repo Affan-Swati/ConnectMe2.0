@@ -45,12 +45,26 @@ class follow_req_adapter(private val items: MutableList<follow_req_model>, priva
 
     override fun getItemCount(): Int = items.size
 
-    private fun acceptReq(userID: String) {
-        val dbRef = FirebaseDatabase.getInstance().getReference("users")
-        dbRef.child(currentUserId).child("Requests").child(userID).removeValue()
-        dbRef.child(currentUserId).child("Followers").child(userID).setValue(true)
-        dbRef.child(userID).child("Following").child(currentUserId).setValue(true)
-    }
+        private fun acceptReq(userID: String)
+        {
+            val dbRef = FirebaseDatabase.getInstance().getReference("users")
+            dbRef.child(currentUserId).child("Requests").child(userID).removeValue()
+            dbRef.child(currentUserId).child("Followers").child(userID).setValue(true)
+            dbRef.child(userID).child("Following").child(currentUserId).setValue(true)
+
+            val chatId = if (currentUserId <= userID) {
+                "${currentUserId}_$userID"
+            } else {
+                "${userID}_$currentUserId"
+            }
+
+            dbRef.child(currentUserId).child("chats").child(chatId).setValue(true)
+            dbRef.child(userID).child("chats").child(chatId).setValue(true)
+
+            val chatRef = FirebaseDatabase.getInstance().getReference("chats/$chatId/participants")
+            chatRef.child(currentUserId).setValue(true)
+            chatRef.child(userID).setValue(true)
+        }
 
     private fun declineReq(userID: String) {
         val dbRef = FirebaseDatabase.getInstance().getReference("users")

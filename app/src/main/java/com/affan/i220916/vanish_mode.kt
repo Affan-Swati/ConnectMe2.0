@@ -2,68 +2,127 @@ package com.affan.i220916
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.widget.EditText
 import android.widget.ImageView
-import androidx.activity.enableEdgeToEdge
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 
 class vanish_mode : AppCompatActivity() {
-    private var clickCount = 0
-    private val handler = Handler(Looper.getMainLooper())
-    private val runnable = Runnable { clickCount = 0 }
+
+    private val database = FirebaseDatabase.getInstance()
+    private val auth = FirebaseAuth.getInstance()
+    private val currentUserId = auth.currentUser?.uid ?: ""
+    private lateinit var chatId: String
+    private lateinit var adapter: message_adapter
+    private val msgList = mutableListOf<Message>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_vanish_mode)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+
+        val senderId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+        val receiverId = intent.getStringExtra("userId") ?: ""
+
+        chatId = if (senderId <= receiverId) {
+            senderId + "_" + receiverId
+        } else {
+            receiverId + "_" + senderId
         }
 
-        val backButton = findViewById<ImageView>(R.id.back_button)
+        val rv = findViewById<RecyclerView>(R.id.recycler_view_msgs_dark)
+        adapter = message_adapter(msgList, null)
+        rv.layoutManager = LinearLayoutManager(this)
+        rv.adapter = adapter
+
+        listenForVanishMessages()
+
+        val messageInput = findViewById<EditText>(R.id.type_msg)
+        findViewById<ImageView>(R.id.send_button).setOnClickListener {
+            val text = messageInput.text.toString()
+            if (text.isNotEmpty()) {
+                sendVanishMessage(text)
+                messageInput.text.clear()
+            }
+        }
+
+        var name = findViewById<TextView>(R.id.name)
+        var pfp = findViewById<ImageView>(R.id.pfp)
+
+        var backButton = findViewById<ImageView>(R.id.back_button)
         backButton.setOnClickListener {
             finish()
-            val intent = Intent(this, searchDMs::class.java)
+            val intent = Intent(this, dm::class.java)
+            intent.putExtra("userId", receiverId)
             startActivity(intent)
         }
 
-        val user = 3
-        val other = 4
-
-        val msgList = mutableListOf<message_model>()
-        msgList.add(message_model(user, "Hello G ki haal chaal"))
-        msgList.add(message_model(other, "May theek thak aap sunaye"))
-        msgList.add(message_model(user, "May bhi theek"))
-        msgList.add(message_model(user, "Are you free today?" ))
-        msgList.add(message_model(other, "No, I'm busy"))
-        msgList.add(message_model(user, ":((((((((((((" ))
-        msgList.add(message_model(other, "SIKE KIDDING"))
-        msgList.add(message_model(other, "Im Free Around 10 PM" ))
-        msgList.add(message_model(user, "HEHEHHE LESGOOO" ))
-
-
-        val rv = findViewById<RecyclerView>(R.id.recycler_view_msgs_dark)
-        rv.layoutManager = LinearLayoutManager(this)
-        rv.adapter = message_adapter(msgList)
-
-        val sendButton = findViewById<ImageView>(R.id.send_button)
-        sendButton.setOnClickListener {
-            clickCount++
-            handler.removeCallbacks(runnable)
-            if (clickCount == 3) {
-                clickCount = 0
-                val intent = Intent(this, dm::class.java)
-                startActivity(intent)
-            } else {
-                handler.postDelayed(runnable, 500) // Reset count after 500ms
+        var receiverPfp: String? = null
+        if (receiverId != null) {
+            fetchUserDetails(receiverId, name, pfp) { fetchedPfp ->
+                receiverPfp = fetchedPfp
+                adapter = message_adapter(msgList, receiverPfp) // 🔹 Ensure adapter updates
+                rv.adapter = adapter
+                listenForVanishMessages()
             }
         }
+    }
+
+    private fun fetchUserDetails(userId: String, name: TextView, pfp: ImageView, callback: (String?) -> Unit) {
+        val userRef = FirebaseDatabase.getInstance().getReference("users").child(userId)
+        userRef.get().addOnSuccessListener { snapshot ->
+            if (snapshot.exists()) {
+                val userName = snapshot.child("name").getValue(String::class.java) ?: "Unknown"
+                val pfpBase64 = snapshot.child("profileImageBase64").getValue(String::class.java)
+                val bitmap = decodeBase64ToBitmap(pfpBase64)
+
+                name.text = userName
+                pfp.setImageBitmap(bitmap)
+                callback(pfpBase64) // Return PFP to adapter
+            } else {
+                callback(null)
+            }
+        }
+    }
+
+    private fun listenForVanishMessages() {
+        val messagesRef = database.getReference("vanish_mode_chats/$chatId/messages")
+
+        messagesRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                msgList.clear()
+                for (msgSnapshot in snapshot.children) {
+                    val message = msgSnapshot.getValue(Message::class.java)
+                    if (message != null) {
+                        msgList.add(message)
+                    }
+                }
+
+                adapter.notifyDataSetChanged()
+
+                // 🔹 Scroll to the latest message
+                val rv = findViewById<RecyclerView>(R.id.recycler_view_msgs_dark)
+                rv.scrollToPosition(msgList.size - 1)
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
+
+
+    private fun sendVanishMessage(text: String) {
+        val messagesRef = database.getReference("vanish_mode_chats/$chatId/messages").push()
+        val message = Message(currentUserId, text, System.currentTimeMillis())
+
+        messagesRef.setValue(message)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Delete all vanish mode messages when user exits
+        database.getReference("vanish_mode_chats/$chatId/messages").removeValue()
     }
 }

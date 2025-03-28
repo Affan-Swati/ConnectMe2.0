@@ -44,6 +44,7 @@
         android:layout_marginRight="15dp"
         android:textSize="10dp"
         android:textColor="#FFFFFF"
+        android:id="@+id/msg_time"
         android:layout_below="@+id/msg"
         android:layout_marginTop="3dp"
         android:text="10:30"
