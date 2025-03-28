@@ -2,6 +2,7 @@
 agp = "8.8.2"
 cameraCore = "1.4.1"
 coreSplashscreen = "1.0.1"
+coverterMoshi = "2.9.0"
 exifinterface = "1.4.0"
 firebaseBom = "33.11.0"
 firebaseBomVersion = "33.11.0"
@@ -26,6 +27,9 @@ googleid = "1.1.1"
 firebaseDatabase = "21.0.0"
 playServicesBase = "18.0.1"
 firebaseFirestoreKtx = "25.1.3"
+firebaseMessaging = "24.1.1"
+retrofit = "2.9.0"
+retrofitVersion = "2.11.0"
 
 [libraries]
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraCore" }
@@ -36,6 +40,8 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-exifinterface = { module = "androidx.exifinterface:exifinterface", version.ref = "exifinterface" }
 compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
+converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofitVersion" }
+coverter-moshi = { module = "com.sqaureup.retrofit2:coverter-moshi", version.ref = "coverterMoshi" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-bom-v3270 = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBomVersion" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
@@ -56,6 +62,9 @@ googleid = { group = "com.google.android.libraries.identity.googleid", name = "g
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
 play-services-base = { group = "com.google.android.gms", name = "play-services-base", version.ref = "playServicesBase" }
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+retrofit-v2110 = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofitVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

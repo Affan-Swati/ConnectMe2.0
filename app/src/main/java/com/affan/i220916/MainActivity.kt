@@ -1,14 +1,25 @@
 package com.affan.i220916
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.StrictMode
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.messaging.FirebaseMessaging
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionDeniedResponse
+import com.karumi.dexter.listener.PermissionGrantedResponse
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.single.PermissionListener
 
 class MainActivity : AppCompatActivity() {
     lateinit var auth: FirebaseAuth;
@@ -21,13 +32,35 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Dexter.withContext(applicationContext)
+                .withPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                .withListener(object : PermissionListener{
+                    override fun onPermissionGranted(p0: PermissionGrantedResponse?) {}
+
+                    override fun onPermissionDenied(p0: PermissionDeniedResponse?) {}
+
+                    override fun onPermissionRationaleShouldBeShown(
+                        p0: PermissionRequest?,
+                        p1: PermissionToken?
+                    ) {
+                        p1?.continuePermissionRequest()
+                    }
+                }).check()
+
+        }
+
+        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+        StrictMode.setThreadPolicy(policy)
+
         auth = FirebaseAuth.getInstance()
 
-
-         //Add a delay before starting the login activity
+        //Add a delay before starting the login activity
         Handler(Looper.getMainLooper()).postDelayed({
             if(auth.currentUser != null)
             {
+                setToken()
                 var intent = Intent(this,feed::class.java)
                 startActivity(intent)
             }
@@ -37,5 +70,19 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }, 1200) // 2000 milliseconds = 2 seconds
+    }
+
+
+    private fun setToken()
+    {
+        FirebaseMessaging.getInstance().token.addOnSuccessListener {
+            if(it.isNotEmpty())
+            {
+                FirebaseDatabase.getInstance().getReference("users")
+                    .child(FirebaseAuth.getInstance().currentUser!!.uid)
+                    .child("fcmToken")
+                    .setValue(it)
+            }
+        }
     }
 }

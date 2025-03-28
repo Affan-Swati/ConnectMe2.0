@@ -2,6 +2,7 @@ package com.affan.i220916
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -11,6 +12,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.messaging.FirebaseMessaging
 
 class login : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth;
@@ -51,6 +54,8 @@ class login : AppCompatActivity() {
                         if (task.isSuccessful)
                         {
                             //Toast.makeText(this, "User Signed In successfully", Toast.LENGTH_SHORT).show()
+                            val userId = FirebaseAuth.getInstance().currentUser?.uid
+                            userId?.let { saveFcmToken(it) }
                             finish()
                             var intent = Intent(this, feed::class.java)
                             startActivity(intent)
@@ -61,6 +66,28 @@ class login : AppCompatActivity() {
                         }
                     }
             }
+        }
+    }
+
+    private fun saveFcmToken(userId: String) {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("FCM", "Fetching FCM registration token failed", task.exception)
+                return@addOnCompleteListener
+            }
+
+            val token = task.result
+            Log.d("FCM", "FCM Token: $token")
+
+            // Save token to Firebase Realtime Database under the user's node
+            val database = FirebaseDatabase.getInstance().reference.child("users").child(userId)
+            database.child("fcmToken").setValue(token)
+                .addOnSuccessListener {
+                    Log.d("FCM", "Token saved successfully")
+                }
+                .addOnFailureListener { e ->
+                    Log.e("FCM", "Failed to save token: ${e.message}")
+                }
         }
     }
 }
