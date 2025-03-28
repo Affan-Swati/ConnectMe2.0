@@ -139,9 +139,7 @@ class video_call : AppCompatActivity() {
         super.onDestroy()
         RtcEngine.destroy()
         rtcEngine = null
-    }
-
-    private fun checkPermissions(): Boolean {
+    }private fun checkPermissions(): Boolean {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
     }

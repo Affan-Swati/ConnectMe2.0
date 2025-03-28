@@ -76,6 +76,7 @@ class search_new_adapter(private val items: MutableList<search_new_users_model>,
     private fun sendRequest(userID: String) {
         val dbRef = FirebaseDatabase.getInstance().getReference("users")
         dbRef.child(userID).child("Requests").child(currentUserId).setValue(true) // Store request under userID
+        NotificationManager.sendNotification(userID, "New Request", "You have a new follow request")
     }
 
     private fun unRequest(userID: String) {

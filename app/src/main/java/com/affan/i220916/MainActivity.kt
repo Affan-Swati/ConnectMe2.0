@@ -73,16 +73,20 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun setToken()
-    {
-        FirebaseMessaging.getInstance().token.addOnSuccessListener {
-            if(it.isNotEmpty())
-            {
-                FirebaseDatabase.getInstance().getReference("users")
-                    .child(FirebaseAuth.getInstance().currentUser!!.uid)
-                    .child("fcmToken")
-                    .setValue(it)
+    private fun setToken() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val userRef = FirebaseDatabase.getInstance().getReference("users").child(userId).child("fcmToken")
+
+        FirebaseMessaging.getInstance().token.addOnSuccessListener { newToken ->
+            if (newToken.isNotEmpty()) {
+                userRef.get().addOnSuccessListener { snapshot ->
+                    val currentToken = snapshot.getValue(String::class.java)
+                    if (currentToken == null || currentToken != newToken) {
+                        userRef.setValue(newToken)
+                    }
+                }
             }
         }
     }
+
 }

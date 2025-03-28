@@ -24,7 +24,7 @@ class audio_call : AppCompatActivity() {
     private val token = "007eJxTYPisKMV3Sn7ijy/rNtcWyczsEtrpK7Zgjn4Ei1NiYJS6wlsFBjNLE+O0NMOUJANLQxNL05SkFNPEJGMLY3OLlLRUw2Rj563P0hsCGRlqshYyMjJAIIjPw1CSWlwSn5yRmJeXmsPAAADUsSFc"
     private val auth = FirebaseAuth.getInstance()
     private val currentUserId = auth.currentUser?.uid ?: ""
-    private var uid = 0
+    private val uid = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,9 +36,6 @@ class audio_call : AppCompatActivity() {
         } else {
             requestPermissions()
         }
-        rtcEngine?.setDefaultAudioRoutetoSpeakerphone(true)  // Route audio to speaker
-        rtcEngine?.adjustPlaybackSignalVolume(100)  // Ensure volume is at 100%
-
         val reciever = intent.getStringExtra("reciever")
         findViewById<ImageView>(R.id.end_call).setOnClickListener {
             leaveChannel()
@@ -48,16 +45,6 @@ class audio_call : AppCompatActivity() {
             startActivity(intent)
         }
 
-        if(currentUserId < reciever.toString())
-        {
-            uid = 1
-        }
-
-        else
-        {
-            uid = 2
-        }
-
         var name = findViewById<TextView>(R.id.name)
         var pfp = findViewById<ImageView>(R.id.pfp)
         var receiverPfp: String? = null
@@ -65,14 +52,6 @@ class audio_call : AppCompatActivity() {
             fetchUserDetails(reciever, name, pfp) { fetchedPfp ->
                 receiverPfp = fetchedPfp
             }
-        }
-
-        var videoCall = findViewById<ImageView>(R.id.video)
-        videoCall.setOnClickListener {
-            finish()
-            val intent = Intent(this, video_call::class.java)
-            intent.putExtra("reciever", reciever)
-            startActivity(intent)
         }
     }
 
@@ -102,14 +81,6 @@ class audio_call : AppCompatActivity() {
 
                 override fun onUserOffline(uid: Int, reason: Int) {
                     Log.d("Agora", "User offline: $uid")
-                    runOnUiThread {
-                        leaveChannel()
-                        finish()
-                    }
-                }
-
-                override fun onError(err: Int) {
-                    Log.e("Agora", "Agora Error: $err")
                 }
             })
             joinChannel()
@@ -118,12 +89,9 @@ class audio_call : AppCompatActivity() {
         }
     }
 
-
     private fun joinChannel() {
-        rtcEngine?.setClientRole(Constants.CLIENT_ROLE_BROADCASTER) // Ensure both users are broadcasters
         rtcEngine?.joinChannel(token, channelName, null, uid)
     }
-
 
     private fun leaveChannel() {
         rtcEngine?.leaveChannel()
