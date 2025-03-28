@@ -27,6 +27,32 @@
             android:src="@drawable/ham_pfp" />
     </androidx.cardview.widget.CardView>
 
+    <androidx.cardview.widget.CardView
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:layout_marginLeft="12dp"
+        app:cardCornerRadius="50dp"
+        android:elevation="12dp"
+        android:innerRadius="0dp"
+        android:shape="ring"
+        android:id="@+id/onlineStatus"
+        android:thicknessRatio="1.9">
+
+        <ImageView
+            android:id="@+id/online"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/circle_green" />
+
+        <ImageView
+            android:id="@+id/offline"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/circle_red" />
+    </androidx.cardview.widget.CardView>
+
     <TextView
         android:layout_toRightOf="@+id/pfp_holder"
         android:id="@+id/username"

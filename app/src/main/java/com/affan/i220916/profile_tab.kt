@@ -53,9 +53,16 @@ class profile_tab : AppCompatActivity() {
         loadUserProfile(nameText, bioText, profileImage, postCountText, followerCountText, followingCountText)
 
         logoutBtn.setOnClickListener {
-            auth.signOut()
-            startActivity(Intent(this, Register::class.java))
-            finish()
+            val userId = FirebaseAuth.getInstance().currentUser?.uid
+            if (userId != null) {
+                val userStatusRef = FirebaseDatabase.getInstance().getReference("Users").child(userId).child("isOnline")
+
+                userStatusRef.setValue(false).addOnCompleteListener {
+                    auth.signOut()
+                    startActivity(Intent(this, Register::class.java))
+                    finish()
+                }
+            }
         }
 
         setupNavigation()
