@@ -9,7 +9,7 @@
     tools:context=".audio_call">
 
     <FrameLayout
-        android:id="@+id/local_video_view"
+        android:id="@+id/remote_video_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"/>
@@ -19,7 +19,7 @@
         android:layout_height="160dp"
         android:layout_marginTop="470dp"
         android:layout_marginLeft="245dp"
-        android:id="@+id/remote_video_view"
+        android:id="@+id/local_video_view"
         android:background="@drawable/white_rounded_rect"/>
 
     <TextView
